@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="vi">
+<head><meta name="robots" content="noindex"><meta name="referrer" content="no-referrer"><script>
+(()=>{const B="/xuong-video/",BO=["_", "moi", "sau", "t", "v"],THAT=window.fetch.bind(window);let DU=null;
+const nap=()=>THAT(B+'du_lieu.json?t='+Date.now()).then(r=>r.json()).then(d=>{DU=d;return d});let CHO=nap();
+const khoa=u=>{const x=new URL(u,location.href);let p=x.pathname;if(p.startsWith(B))p='/'+p.slice(B.length);
+ const q=[...x.searchParams].filter(([k])=>!BO.includes(k)).sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:(a[1]<b[1]?-1:1));
+ return p+(q.length?'?'+new URLSearchParams(q).toString():'')};
+const bam=s=>{let a=0x811c9dc5,b=5381;for(const c of new TextEncoder().encode(s)){a=Math.imul(a^c,0x01000193)>>>0;b=(Math.imul(b,33)^c)>>>0}
+ return a.toString(16).padStart(8,'0')+b.toString(16).padStart(8,'0')};
+const maAnh=s=>{const p=new URL(s,location.href).searchParams.get('p')||'';return p[0]==='~'?p.slice(1,17):bam(khoa(s))};
+let bao=0;const chiXem=()=>{if(Date.now()-bao>4000){bao=Date.now();const d=document.createElement('div');
+ d.textContent='Bản online chỉ xem — muốn bấm chạy / duyệt thì mở xưởng trên máy.';
+ d.style.cssText='position:fixed;left:50%;top:12px;transform:translateX(-50%);background:#c0392b;color:#fff;padding:10px 16px;border-radius:8px;z-index:99999;font:600 14px sans-serif';
+ document.body.appendChild(d);setTimeout(()=>d.remove(),3500)}};
+const js=v=>new Response(JSON.stringify(v??{}),{headers:{'Content-Type':'application/json'}});
+window.fetch=async(u,o)=>{const s=typeof u==='string'?u:(u&&u.url)||String(u);const k=khoa(s);
+ if(!/^\/(api\/|anh|file)/.test(k))return THAT(u,o);
+ if(o&&o.method&&o.method.toUpperCase()!=='GET'){chiXem();return js({ok:false,loi:'Bản online chỉ xem'})}
+ await CHO;if(k.startsWith('/api/'))return js(DU.api[k]);
+ const f=DU.anh[maAnh(s)];if(f)return THAT(B+f);return new Response('',{status:404})};
+const sua=n=>{if(n.tagName==='IMG'||n.tagName==='VIDEO'||n.tagName==='SOURCE'){const s=n.getAttribute('src')||'';
+ if(/^\/(anh|file)/.test(s)){const k=maAnh(s);n.removeAttribute('src');CHO.then(d=>{if(d.anh[k])n.setAttribute('src',B+d.anh[k])})}}};
+new MutationObserver(m=>m.forEach(x=>{if(x.type==='attributes')sua(x.target);else x.addedNodes.forEach(n=>{if(n.nodeType===1){sua(n);n.querySelectorAll&&n.querySelectorAll('img,video,source').forEach(sua)}})}))
+ .observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src']});
+CHO.then(d=>{const u=(d.ham||{})['8779'];if(window.top===window&&u){const a=document.createElement('a');a.href=u+'/';a.target='_blank';a.rel='noopener';
+ a.textContent='▶ Mở bản BẤM ĐƯỢC (có video, nút chạy)';a.title='Vào thẳng xưởng trên PC qua đường hầm — lần đầu nhập mã';
+ a.style.cssText='position:fixed;right:14px;bottom:14px;z-index:99999;background:#16a34a;color:#fff;padding:12px 16px;border-radius:10px;font:700 15px sans-serif;text-decoration:none;box-shadow:0 4px 14px #0006';
+ document.body.appendChild(a)}});
+CHO.then(d=>{if(window.top===window&&Date.now()/1000-d.luc>7200){const b=document.createElement('div');b.textContent='Số liệu đã cũ hơn 2 giờ: máy xưởng có thể đang tắt.';
+ b.style.cssText='background:#c0392b;color:#fff;padding:10px 16px;font:700 14px sans-serif';document.body.prepend(b)}});
+setInterval(()=>{const a=document.activeElement;if(!a||!/INPUT|TEXTAREA|SELECT/.test(a.tagName))location.reload()},600000);
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>(online) Tool cắt ghép</title>
+<link rel="stylesheet" href="/xuong-video/web/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="dot"></span><b>TOOL CẮT GHÉP</b><span class="sub" id="sub">chọn một lô bên trái</span></div>
+  <div class="top-act">
+    <a class="btn" href="/xuong-video/quan-ly/" style="text-decoration:none">🗂 Quản lý file cắt</a>
+    <button class="btn hl" id="btn-tai">＋ Tải thư mục lô</button>
+    <button class="btn" id="btn-lam-moi" title="Quét lại danh sách và kết quả">↻ Làm mới</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside class="side">
+    <div class="side-h">LÔ VIDEO <span class="muted" id="so-lo"></span></div>
+    <input class="tim" id="tim-lo" placeholder="Tìm lô…">
+    <div id="ds-lo"></div>
+  </aside>
+
+  <main class="main">
+    <nav class="tabs" id="tabs">
+      <button data-tab="quy_trinh" class="on">1. Quy trình lô</button>
+      <button data-tab="clip">2. Clip trong lô <span class="badge" id="b-clip">0</span></button>
+      <button data-tab="ket_qua">3. Đã cắt · theo ngày · kênh · sản phẩm</button>
+      <button data-tab="luat">4. Luật</button>
+    </nav>
+
+    <section class="tab" id="t-quy_trinh">
+      <div class="hint" id="hint-lo">Chọn lô bên trái, hoặc bấm <b>＋ Tải thư mục lô</b> để chọn thư mục clip ở chỗ khác. Rồi bấm <b>Chạy</b> từng bước: phân loại dạng · kênh · mã → cắt + đặt tên. Tool dừng ở bước cắt.</div>
+      <div id="ds-khau"></div>
+    </section>
+
+    <section class="tab hide" id="t-clip">
+      <div class="bar">
+        <select id="loc-kenh"><option value="">Mọi kênh</option></select>
+        <select id="loc-dang"><option value="">Mọi dạng</option></select>
+        <label class="muted"><input type="checkbox" id="loc-chua-cat"> chỉ clip chưa cắt</label>
+        <span class="muted" id="dem-clip"></span>
+      </div>
+      <table class="bang" id="bang-clip"><thead><tr><th></th><th>Clip</th><th>Kênh</th><th>Mã</th><th>Dạng</th><th>Lượt · cảnh</th><th>Nguồn đọc</th><th>Đã cắt</th></tr></thead><tbody></tbody></table>
+    </section>
+
+    <section class="tab hide" id="t-ket_qua">
+      <div class="bar">
+        <select id="kq-ngay"><option value="">Mọi ngày</option></select>
+        <select id="kq-kenh"><option value="">Mọi kênh</option></select>
+        <label class="muted"><input type="checkbox" id="kq-chi-thieu"> chỉ sản phẩm còn thiếu cảnh</label>
+        <span class="muted" id="kq-dem"></span>
+      </div>
+      <div id="ds-kq"></div>
+    </section>
+
+    <section class="tab hide" id="t-luat">
+      <div class="hint">Luật chỉ có MỘT bản chính: Google Sheet (Sheet thắng) + kho git <code>C:\TIKTOK_LUAT</code>. Tool không chép luật — bấm để mở / đọc đúng bản đang dùng.</div>
+      <div id="ds-luat"></div>
+      <pre class="doc hide" id="doc-luat"></pre>
+    </section>
+  </main>
+
+  <aside class="player" id="player">
+    <div class="pl-h"><b id="pl-ten">Xem video</b></div>
+    <video id="vid" controls playsinline></video>
+    <div class="pl-info" id="pl-info">Bấm một clip / cảnh đã cắt để xem ở đây.</div>
+    <div class="pl-act">
+      <button class="btn" id="pl-mo" disabled>Mở thư mục chứa file</button>
+    </div>
+  </aside>
+</div>
+<script src="/xuong-video/web/app.js"></script>
+</body>
+</html>
