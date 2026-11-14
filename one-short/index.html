@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="vi"><head><meta name="robots" content="noindex"><meta name="referrer" content="no-referrer"><script>
+(()=>{const B="/xuong-video/",BO=["_", "moi", "sau", "t", "v"],THAT=window.fetch.bind(window);let DU=null;
+const nap=()=>THAT(B+'du_lieu.json?t='+Date.now()).then(r=>r.json()).then(d=>{DU=d;return d});let CHO=nap();
+const khoa=u=>{const x=new URL(u,location.href);let p=x.pathname;if(p.startsWith(B))p='/'+p.slice(B.length);
+ const q=[...x.searchParams].filter(([k])=>!BO.includes(k)).sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:(a[1]<b[1]?-1:1));
+ return p+(q.length?'?'+new URLSearchParams(q).toString():'')};
+const bam=s=>{let a=0x811c9dc5,b=5381;for(const c of new TextEncoder().encode(s)){a=Math.imul(a^c,0x01000193)>>>0;b=(Math.imul(b,33)^c)>>>0}
+ return a.toString(16).padStart(8,'0')+b.toString(16).padStart(8,'0')};
+const maAnh=s=>{const p=new URL(s,location.href).searchParams.get('p')||'';return p[0]==='~'?p.slice(1,17):bam(khoa(s))};
+let bao=0;const chiXem=()=>{if(Date.now()-bao>4000){bao=Date.now();const d=document.createElement('div');
+ d.textContent='Bản online chỉ xem — muốn bấm chạy / duyệt thì mở xưởng trên máy.';
+ d.style.cssText='position:fixed;left:50%;top:12px;transform:translateX(-50%);background:#c0392b;color:#fff;padding:10px 16px;border-radius:8px;z-index:99999;font:600 14px sans-serif';
+ document.body.appendChild(d);setTimeout(()=>d.remove(),3500)}};
+const js=v=>new Response(JSON.stringify(v??{}),{headers:{'Content-Type':'application/json'}});
+window.fetch=async(u,o)=>{const s=typeof u==='string'?u:(u&&u.url)||String(u);const k=khoa(s);
+ if(!/^\/(api\/|anh|file)/.test(k))return THAT(u,o);
+ if(o&&o.method&&o.method.toUpperCase()!=='GET'){chiXem();return js({ok:false,loi:'Bản online chỉ xem'})}
+ await CHO;if(k.startsWith('/api/'))return js(DU.api[k]);
+ const f=DU.anh[maAnh(s)];if(f)return THAT(B+f);return new Response('',{status:404})};
+const sua=n=>{if(n.tagName==='IMG'||n.tagName==='VIDEO'||n.tagName==='SOURCE'){const s=n.getAttribute('src')||'';
+ if(/^\/(anh|file)/.test(s)){const k=maAnh(s);n.removeAttribute('src');CHO.then(d=>{if(d.anh[k])n.setAttribute('src',B+d.anh[k])})}}};
+new MutationObserver(m=>m.forEach(x=>{if(x.type==='attributes')sua(x.target);else x.addedNodes.forEach(n=>{if(n.nodeType===1){sua(n);n.querySelectorAll&&n.querySelectorAll('img,video,source').forEach(sua)}})}))
+ .observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src']});
+CHO.then(d=>{const u=(d.ham||{})['8779'];if(window.top===window&&u){const a=document.createElement('a');a.href=u+'/';a.target='_blank';a.rel='noopener';
+ a.textContent='▶ Mở bản BẤM ĐƯỢC (có video, nút chạy)';a.title='Vào thẳng xưởng trên PC qua đường hầm — lần đầu nhập mã';
+ a.style.cssText='position:fixed;right:14px;bottom:14px;z-index:99999;background:#16a34a;color:#fff;padding:12px 16px;border-radius:10px;font:700 15px sans-serif;text-decoration:none;box-shadow:0 4px 14px #0006';
+ document.body.appendChild(a)}});
+CHO.then(d=>{if(window.top===window&&Date.now()/1000-d.luc>7200){const b=document.createElement('div');b.textContent='Số liệu đã cũ hơn 2 giờ: máy xưởng có thể đang tắt.';
+ b.style.cssText='background:#c0392b;color:#fff;padding:10px 16px;font:700 14px sans-serif';document.body.prepend(b)}});
+setInterval(()=>{const a=document.activeElement;if(!a||!/INPUT|TEXTAREA|SELECT/.test(a.tagName))location.reload()},600000);
+})();
+</script><meta charset="utf-8"><title>(online) One short</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- 05/11/2026 đại ca: "code cho tao tool cắt one short, hiển thị các file cắt, có file luật, để tao bấm xem các video one short đã cắt và bấm chat sửa code sửa luật
+     là claude nhận việc và tự động sửa sheet, luật, git" -->
+<style>
+:root{--nen:#0f1216;--o:#171b21;--o2:#1e232b;--vien:#2a3039;--chu:#e6e9ee;--mo:#8b95a3;--xanh:#3fb950;--vang:#d29922;--do:#f05252;--chon:#2f6feb;--cl:#d97757}
+*{box-sizing:border-box}body{margin:0;background:var(--nen);color:var(--chu);font:14px/1.45 system-ui,"Segoe UI",sans-serif;height:100vh;display:flex;flex-direction:column}
+header{display:flex;gap:10px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--vien);flex-wrap:wrap}
+header h1{font-size:17px;margin:0}select,input,button,textarea{font:inherit;color:var(--chu);background:var(--o2);border:1px solid var(--vien);border-radius:8px;padding:6px 10px}
+button{cursor:pointer}button.vang{background:var(--vang);color:#111;font-weight:700;border:0}button.do{background:var(--do);color:#fff;border:0}button.on{outline:2px solid var(--vang)}
+.mo{color:var(--mo)}.xanh{color:var(--xanh)}.vg{color:var(--vang)}.dk{color:var(--do)}
+main{flex:1;display:grid;grid-template-columns:minmax(360px,1.1fr) minmax(360px,1fr) minmax(380px,1fr);gap:10px;padding:10px;min-height:0}
+.o{background:var(--o);border:1px solid var(--vien);border-radius:12px;display:flex;flex-direction:column;min-height:0}
+.o h2{font-size:14px;margin:0;padding:10px 12px;border-bottom:1px solid var(--vien);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cuon{overflow:auto;flex:1;min-height:0}
+table{width:100%;border-collapse:collapse;font-size:12.5px}td,th{padding:5px 7px;border-bottom:1px solid var(--vien);text-align:left;vertical-align:top}
+th{color:var(--mo);font-weight:500;position:sticky;top:0;background:var(--o)}tr.dong{cursor:pointer}tr.dong:hover{background:var(--o2)}tr.chon{background:#22304a}
+.the{font-size:11px;padding:1px 7px;border-radius:9px;background:var(--o2);border:1px solid var(--vien);white-space:nowrap}
+.the.mn{color:#7fb4ff}.the.cam{color:var(--mo)}.the.kh{color:var(--vang)}.the.lech{background:rgba(240,82,82,.15);color:var(--do);border-color:var(--do)}
+video{width:100%;max-height:60vh;background:#000;border-radius:8px}
+.tt{padding:10px 12px;font-size:12.5px}.tt div{margin-bottom:4px}
+.tab{display:flex;gap:6px}.tab button{padding:4px 10px}
+.tn{max-width:92%;padding:7px 10px;border-radius:10px;white-space:pre-wrap;word-break:break-word;margin:6px 10px;font-size:13px}
+.tn.dc{margin-left:auto;background:var(--chon);color:#fff}.tn.cl{background:var(--o2);border:1px solid var(--vien)}.tn .g{font-size:11px;color:var(--mo);margin-top:3px}
+.tn.dc .g{color:#dbe4ff}#bc{font-size:12px;color:var(--mo);padding:6px 12px;border-top:1px dashed var(--vien);max-height:110px;overflow:auto}
+.go{display:flex;gap:8px;padding:8px;border-top:1px solid var(--vien)}.go textarea{flex:1;height:64px;resize:none}
+pre{white-space:pre-wrap;word-break:break-word;font:12px/1.5 Consolas,monospace;margin:0;padding:10px 12px}
+#nk{font:12px/1.4 Consolas,monospace;color:var(--mo);max-height:120px;overflow:auto;padding:6px 12px;border-top:1px dashed var(--vien)}
+</style></head><body>
+<header><h1>✂ ONE SHORT</h1>
+  <select id="lo"></select>
+  <span class="tab" id="loc"><button data-l="" class="on">Tất cả</button><button data-l="mn">Mẫu nói</button><button data-l="lech">Lệch mốc nói</button>
+    <button data-l="mat">Chờ mắt</button><button data-l="khac">Chưa giao</button></span>
+  <input id="tim" placeholder="Tìm IMG / SP…" style="width:150px">
+  <span style="margin-left:auto"></span>
+  <button id="b-soat" title="Nghe lại chữ đầu (không lọc lặng) mọi clip mẫu nói đã cắt của lô — tìm clip thừa đoạn đầu">🔎 Soát mốc nói cả lô</button>
+  <button id="b-catlai" class="vang" title="Cắt lại các clip đang tick bằng code hiện tại">✂ Cắt lại clip đã chọn</button>
+</header>
+<main>
+  <div class="o"><h2>Clip one short <span class="mo" id="dem"></span></h2><div class="cuon"><table><thead><tr><th><input type="checkbox" id="tat"></th><th>Clip</th><th>Dạng</th><th>Vào → ra</th><th>Trạng thái</th></tr></thead><tbody id="ds"></tbody></table></div>
+    <div id="nk"></div></div>
+  <div class="o"><h2 id="ten-clip">Chọn một clip để xem</h2>
+    <div style="padding:10px"><video id="vd" controls preload="metadata"></video>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button id="b-cat">▶ Bản đã cắt</button><button id="b-goc">▶ Nguồn từ trước mốc vào 3 s</button>
+        <button id="b-mo" title="Mở thư mục chứa file">📁</button><button id="b-chat-clip" title="Đưa clip này vào ô chat Claude">💬 Hỏi Claude về clip này</button></div></div>
+    <div class="cuon tt" id="tt"></div></div>
+  <div class="o"><h2><span class="tab"><button data-p="chat" class="on">💬 Claude sửa code · luật · Sheet · git</button><button data-p="luat">📜 Luật & code</button></span>
+      <span class="mo" id="cl-tt" style="font-size:12px"></span></h2>
+    <div id="p-chat" style="display:flex;flex-direction:column;flex:1;min-height:0"><div id="cl-canh"></div><div class="cuon" id="cl-ds"></div><div id="bc" style="display:none"></div>
+      <div class="go"><textarea id="cl-o" placeholder="Vd: IMG_5474 cắt thừa đầu 1,4 s — sửa code, ghi luật lên Sheet + git. (Enter gửi)"></textarea><button id="cl-gui" style="background:var(--cl);color:#fff;border:0;font-weight:700">Gửi</button></div></div>
+    <div id="p-luat" style="display:none;flex-direction:column;flex:1;min-height:0"><div id="tl-ds" style="padding:8px 10px;display:flex;gap:6px;flex-wrap:wrap"></div><div class="cuon"><pre id="tl-nd" class="mo">Chọn một tài liệu.</pre></div></div>
+  </div>
+</main>
+<script>
+const $ = s => document.querySelector(s), esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const gio = t => t ? new Date(t * 1000).toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'}) : '';
+const fu = p => '/file?p=' + encodeURIComponent(p);
+let LO = '', DS = [], CHON = null, LOC = '', TICK = new Set();
+async function napLo() {
+  const ds = await fetch('/api/os/lo').then(r => r.json());
+  const q = new URLSearchParams(location.search).get('lo');
+  LO = q && ds.includes(q) ? q : ds[0] || '';
+  $('#lo').innerHTML = ds.map(l => `<option ${l === LO ? 'selected' : ''}>${l}</option>`).join('');
+  await napClip();
+}
+async function napClip() {
+  if (!LO) return;
+  const d = await fetch('/api/os/clip?lo=' + LO).then(r => r.json());
+  DS = d.clip; ve();
+}
+function loc(x) {
+  const q = $('#tim').value.trim().toLowerCase();
+  if (q && !(x.img + ' sp' + x.stt + ' ' + x.ten).toLowerCase().includes(q)) return false;
+  if (LOC === 'mn') return x.mau_noi;
+  if (LOC === 'lech') return (x.soat_lech || 0) > 0.3;
+  if (LOC === 'mat') return x.can_mat;
+  if (LOC === 'khac') return x.tt !== 'GIAO';
+  return true;
+}
+function dang(x) {
+  if (x.mau_noi) return '<span class="the mn">mẫu nói</span>' + (x.sua_dau ? ' <span class="the xanh" title="' + esc(x.sua_dau) + '">mốc đã chỉnh</span>' : '');
+  if (/câm/.test(x.dang)) return '<span class="the cam">câm</span>';
+  if (x.ky_hieu) return '<span class="the kh">ký hiệu quay</span>';
+  return '<span class="the">' + esc(x.dang || '—') + '</span>';
+}
+function ve() {
+  const ds = DS.filter(loc);
+  $('#dem').textContent = `· ${ds.length} / ${DS.length} clip · lô ${LO}`;
+  $('#ds').innerHTML = ds.map(x => `<tr class="dong ${CHON && CHON.img === x.img ? 'chon' : ''}" data-img="${x.img}">
+    <td><input type="checkbox" data-t="${x.img}" ${TICK.has(x.img) ? 'checked' : ''}></td>
+    <td><b>${esc(x.img)}</b> <span class="mo">SP${esc(x.stt)} · ${esc(x.kenh)}</span></td><td>${dang(x)}${(x.soat_lech || 0) > 0.3 ? ` <span class="the lech" title="${esc(x.soat_ghi)}">thừa đầu ${x.soat_lech}s</span>` : ''}</td>
+    <td>${x.dau != null ? (+x.dau).toFixed(2) + ' → ' + (+x.cuoi).toFixed(2) : '—'}</td>
+    <td class="${x.tt === 'GIAO' ? 'xanh' : x.tt === 'NGHI' || x.tt === 'CHO_MAT' ? 'vg' : 'dk'}">${esc(x.tt)}${x.can_mat ? ' · <span class="vg">chờ mắt</span>' : ''}</td></tr>`).join('') || '<tr><td colspan=5 class="mo">Không có clip.</td></tr>';
+}
+function chon(img) {
+  CHON = DS.find(x => x.img === img); ve();
+  const x = CHON; if (!x) return;
+  $('#ten-clip').innerHTML = `${esc(x.img)} · SP${esc(x.stt)} · ${esc(x.kenh)}`;
+  if (x.file) { $('#vd').src = fu(x.file); } else $('#vd').removeAttribute('src');
+  $('#tt').innerHTML = `<div><b>File:</b> ${esc(x.ten || '(chưa có file cắt)')}</div>
+    <div><b>Dạng:</b> ${esc(x.dang)} · <b>vào</b> ${x.dau ?? '—'} s → <b>ra</b> ${x.cuoi ?? '—'} s · gốc ${x.dai_goc ?? '?'} s · nguồn ${esc(x.loai_nguon)}</div>
+    ${x.chu_dau ? `<div><b>Chữ đầu lời mẫu:</b> «${esc(x.chu_dau)}»</div>` : ''}
+    ${x.sua_dau ? `<div class="xanh"><b>Mốc nói đã chỉnh:</b> ${esc(x.sua_dau)}</div>` : ''}
+    ${x.soat_lech != null ? `<div class="${x.soat_lech > 0.3 ? 'dk' : 'xanh'}"><b>Soát mốc nói:</b> ${x.soat_lech > 0.3 ? 'THỪA ĐẦU ' + x.soat_lech + ' s (chữ đầu thật ' + x.soat_moi + ' s) ⇒ bấm Cắt lại' : 'đúng'}${x.soat_ghi ? ' · ' + esc(x.soat_ghi) : ''}</div>` : ''}
+    <div><b>Mốc ghi:</b> <span class="mo">${esc(x.moc_ghi)}</span></div>${x.ly_do ? `<div><b>Lý do:</b> <span class="vg">${esc(x.ly_do)}</span></div>` : ''}`;
+}
+$('#ds').addEventListener('click', e => {
+  const t = e.target.closest('[data-t]'); if (t) { t.checked ? TICK.add(t.dataset.t) : TICK.delete(t.dataset.t); return; }
+  const r = e.target.closest('tr.dong'); if (r) chon(r.dataset.img);
+});
+$('#tat').onchange = e => { DS.filter(loc).forEach(x => e.target.checked ? TICK.add(x.img) : TICK.delete(x.img)); ve(); };
+$('#b-cat').onclick = () => { if (CHON && CHON.file) { $('#vd').src = fu(CHON.file); $('#vd').play(); } };
+$('#b-goc').onclick = () => { if (CHON && CHON.nguon) { const v = $('#vd'); v.src = fu(CHON.nguon); v.onloadedmetadata = () => { v.currentTime = Math.max(0, (CHON.dau || 0) - 3); v.play(); v.onloadedmetadata = null; }; } };
+$('#b-mo').onclick = () => { if (CHON && (CHON.file || CHON.nguon)) fetch('/api/mo_thu_muc', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({p: CHON.file || CHON.nguon})}); };
+$('#b-chat-clip').onclick = () => { if (!CHON) return; moTab('chat'); $('#cl-o').value = `Lô ${LO} clip ${CHON.img} (SP${CHON.stt}, ${CHON.dang}, cắt ${CHON.dau}→${CHON.cuoi} s): `; $('#cl-o').focus(); };
+document.querySelectorAll('#loc button').forEach(b => b.onclick = () => { LOC = b.dataset.l; document.querySelectorAll('#loc button').forEach(x => x.classList.toggle('on', x === b)); ve(); });
+$('#tim').oninput = ve;
+$('#lo').onchange = e => { LO = e.target.value; TICK.clear(); CHON = null; history.replaceState(null, '', '?lo=' + LO); napClip(); };
+async function chayViec(viec, clips) {
+  const r = await fetch('/api/os/chay', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-Tu-Lam': '1'}, body: JSON.stringify({viec, lo: LO, clips})}).then(r => r.json());
+  alert(r.tt); napViec();
+}
+$('#b-soat').onclick = () => chayViec('soat', []);
+$('#b-catlai').onclick = () => { const c = [...TICK]; if (!c.length) return alert('Tick các clip cần cắt lại trước.'); if (confirm(`Cắt lại ${c.length} clip lô ${LO} bằng code hiện tại?`)) chayViec('cat_lai', c); };
+async function napViec() {
+  if (!LO) return;
+  const v = await fetch('/api/os/viec?lo=' + LO).then(r => r.json());
+  $('#nk').innerHTML = (v.dang ? `<div class="vg">● đang chạy: ${esc(v.dang.lenh)}</div>` : '') + v.dong.slice(-10).map(esc).join('<br>');
+  $('#nk').scrollTop = 1e9;
+  if (v.dang) setTimeout(() => { napViec(); napClip(); }, 5000);
+}
+// ── luật & code ──
+function moTab(p) { document.querySelectorAll('[data-p]').forEach(b => b.classList.toggle('on', b.dataset.p === p)); $('#p-chat').style.display = p === 'chat' ? 'flex' : 'none'; $('#p-luat').style.display = p === 'luat' ? 'flex' : 'none'; }
+document.querySelectorAll('[data-p]').forEach(b => b.onclick = () => moTab(b.dataset.p));
+async function napTL() {
+  const ds = await fetch('/api/os/tai_lieu').then(r => r.json());
+  $('#tl-ds').innerHTML = ds.map(t => t.url ? `<a href="${t.url}" target="_blank" style="color:var(--xanh)">${esc(t.ten)} ↗</a>` : `<button data-k="${t.k}">${esc(t.ten)}</button>`).join('');
+  $('#tl-ds').querySelectorAll('[data-k]').forEach(b => b.onclick = async () => { const d = await fetch('/api/os/doc?k=' + b.dataset.k).then(r => r.json()); $('#tl-nd').className = ''; $('#tl-nd').textContent = d.duong + '\n\n' + (d.noi_dung || d.loi); });
+}
+// ── chat Claude (phòng one-short) ──
+const C = {sau: 0, tin: [], d: null};
+function veChat() {
+  const d = C.d || {};
+  $('#cl-tt').textContent = d.dang ? '● Claude đang làm' + (d.cho ? ' · ' + d.cho + ' tin chờ' : '') : (d.dang_nhap ? 'Claude sẵn sàng' : '');
+  $('#cl-canh').innerHTML = d.dang_nhap === false ? `<div style="padding:8px 12px;color:var(--do);font-size:12.5px">${esc(d.ly)}</div>` : '';
+  const ds = $('#cl-ds'), cuoi = ds.scrollHeight - ds.scrollTop - ds.clientHeight < 40;
+  ds.innerHTML = C.tin.map(x => `<div class="tn ${x.nguoi === 'Claude' ? 'cl' : 'dc'}">${esc(x.chu)}<div class="g">${esc(x.nguoi)} · ${gio(x.luc)}${x.giay ? ' · ' + x.giay + ' s' : ''}</div></div>`).join('')
+    || '<div class="mo" style="padding:12px">Nhắn Claude việc sửa code cắt one short / luật: Claude tìm nguyên nhân, sửa code, ghi luật lên Sheet "CÁC FILE LUẬT" tab 3, sửa file luật trong kho git và đẩy git, rồi báo ở đây.</div>';
+  if (cuoi) ds.scrollTop = ds.scrollHeight;
+  $('#bc').style.display = d.dang ? '' : 'none';
+  $('#bc').innerHTML = d.dang ? (d.buoc || []).map(b => `<div>${gio(b.luc)} · ${esc(b.chu)}</div>`).join('') + `<div><b>${esc(d.viec || '')}</b></div>` : '';
+  $('#bc').scrollTop = 1e9;
+}
+async function napChat() {
+  try { const d = await fetch('/api/claude_chat?phong=one-short&sau=' + C.sau).then(r => r.json()); C.d = d; if (d.tin.length) { C.tin = C.tin.concat(d.tin).slice(-300); C.sau = d.tin[d.tin.length - 1].id; } veChat(); } catch (e) {}
+  setTimeout(napChat, C.d && C.d.dang ? 1500 : 5000);
+}
+async function gui() {
+  const chu = $('#cl-o').value.trim(); if (!chu) return; $('#cl-o').value = '';
+  const r = await fetch('/api/claude_chat', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-Claude-Chat': '1'}, body: JSON.stringify({chu, phong: 'one-short'})}).then(r => r.json());
+  if (!r.ok) alert(r.tt);
+}
+$('#cl-gui').onclick = gui;
+$('#cl-o').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); gui(); } });
+napLo().then(napViec); napTL(); napChat();
+</script></body></html>

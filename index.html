@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="vi">
+<head><meta name="robots" content="noindex"><meta name="referrer" content="no-referrer"><script>
+(()=>{const B="/xuong-video/",BO=["_", "moi", "sau", "t", "v"],THAT=window.fetch.bind(window);let DU=null;
+const nap=()=>THAT(B+'du_lieu.json?t='+Date.now()).then(r=>r.json()).then(d=>{DU=d;return d});let CHO=nap();
+const khoa=u=>{const x=new URL(u,location.href);let p=x.pathname;if(p.startsWith(B))p='/'+p.slice(B.length);
+ const q=[...x.searchParams].filter(([k])=>!BO.includes(k)).sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:(a[1]<b[1]?-1:1));
+ return p+(q.length?'?'+new URLSearchParams(q).toString():'')};
+const bam=s=>{let a=0x811c9dc5,b=5381;for(const c of new TextEncoder().encode(s)){a=Math.imul(a^c,0x01000193)>>>0;b=(Math.imul(b,33)^c)>>>0}
+ return a.toString(16).padStart(8,'0')+b.toString(16).padStart(8,'0')};
+const maAnh=s=>{const p=new URL(s,location.href).searchParams.get('p')||'';return p[0]==='~'?p.slice(1,17):bam(khoa(s))};
+let bao=0;const chiXem=()=>{if(Date.now()-bao>4000){bao=Date.now();const d=document.createElement('div');
+ d.textContent='Bản online chỉ xem — muốn bấm chạy / duyệt thì mở xưởng trên máy.';
+ d.style.cssText='position:fixed;left:50%;top:12px;transform:translateX(-50%);background:#c0392b;color:#fff;padding:10px 16px;border-radius:8px;z-index:99999;font:600 14px sans-serif';
+ document.body.appendChild(d);setTimeout(()=>d.remove(),3500)}};
+const js=v=>new Response(JSON.stringify(v??{}),{headers:{'Content-Type':'application/json'}});
+window.fetch=async(u,o)=>{const s=typeof u==='string'?u:(u&&u.url)||String(u);const k=khoa(s);
+ if(!/^\/(api\/|anh|file)/.test(k))return THAT(u,o);
+ if(o&&o.method&&o.method.toUpperCase()!=='GET'){chiXem();return js({ok:false,loi:'Bản online chỉ xem'})}
+ await CHO;if(k.startsWith('/api/'))return js(DU.api[k]);
+ const f=DU.anh[maAnh(s)];if(f)return THAT(B+f);return new Response('',{status:404})};
+const sua=n=>{if(n.tagName==='IMG'||n.tagName==='VIDEO'||n.tagName==='SOURCE'){const s=n.getAttribute('src')||'';
+ if(/^\/(anh|file)/.test(s)){const k=maAnh(s);n.removeAttribute('src');CHO.then(d=>{if(d.anh[k])n.setAttribute('src',B+d.anh[k])})}}};
+new MutationObserver(m=>m.forEach(x=>{if(x.type==='attributes')sua(x.target);else x.addedNodes.forEach(n=>{if(n.nodeType===1){sua(n);n.querySelectorAll&&n.querySelectorAll('img,video,source').forEach(sua)}})}))
+ .observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src']});
+CHO.then(d=>{const u=(d.ham||{})['8779'];if(window.top===window&&u){const a=document.createElement('a');a.href=u+'/';a.target='_blank';a.rel='noopener';
+ a.textContent='▶ Mở bản BẤM ĐƯỢC (có video, nút chạy)';a.title='Vào thẳng xưởng trên PC qua đường hầm — lần đầu nhập mã';
+ a.style.cssText='position:fixed;right:14px;bottom:14px;z-index:99999;background:#16a34a;color:#fff;padding:12px 16px;border-radius:10px;font:700 15px sans-serif;text-decoration:none;box-shadow:0 4px 14px #0006';
+ document.body.appendChild(a)}});
+CHO.then(d=>{if(window.top===window&&Date.now()/1000-d.luc>7200){const b=document.createElement('div');b.textContent='Số liệu đã cũ hơn 2 giờ: máy xưởng có thể đang tắt.';
+ b.style.cssText='background:#c0392b;color:#fff;padding:10px 16px;font:700 14px sans-serif';document.body.prepend(b)}});
+setInterval(()=>{const a=document.activeElement;if(!a||!/INPUT|TEXTAREA|SELECT/.test(a.tagName))location.reload()},600000);
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>(online) Xưởng video</title>
+<style>
+/* 04/11/2026 đại ca: "mở đầu luôn luôn là giao diện quản lý file … nút Tự làm … gộp 2 web này vào thành 1 web, để tự động nối công việc với nhau,
+   mọi thao tác sẽ hiển thị đang làm trên web để theo dõi được". Một khung: các trang cũ của 8779 + trang dựng 8777 nằm trong tab, nút Tự làm ở thanh trên. */
+:root{--nen:#0f1216;--o:#171b21;--o2:#1e232b;--vien:#2a3039;--chu:#e6e9ee;--mo:#8b95a3;--xanh:#3fb950;--vang:#d29922;--do:#f05252;--chon:#2f6feb}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--nen);color:var(--chu);font:14px/1.45 "Segoe UI",system-ui,sans-serif}
+body{display:flex;flex-direction:column}
+button{font:inherit;color:inherit;cursor:pointer}
+.top{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--o);border-bottom:1px solid var(--vien);flex-wrap:wrap}
+.top h1{margin:0 12px 0 4px;font-size:16px;letter-spacing:.4px;white-space:nowrap}
+.tab{background:transparent;border:1px solid transparent;border-radius:8px;padding:7px 12px;font-size:14px;color:var(--mo);white-space:nowrap}
+.tab:hover{color:var(--chu)}
+.tab.on{background:var(--o2);border-color:var(--vien);color:var(--chu);font-weight:600}
+.tab .cham{display:none;width:8px;height:8px;border-radius:50%;background:var(--xanh);margin-left:6px;vertical-align:middle;animation:nhay 1s infinite}
+.tab.chay .cham{display:inline-block}
+@keyframes nhay{50%{opacity:.25}}
+.sp{flex:1}
+#nut{border:0;border-radius:9px;padding:9px 20px;font-weight:700;font-size:15px;background:var(--xanh);color:#04120a;white-space:nowrap}
+#nut.dung{background:var(--do);color:#fff}
+.dai{display:flex;align-items:center;gap:10px;padding:5px 16px;background:#0b0e12;border-bottom:1px solid var(--vien);font:12.5px/1.4 Consolas,"Cascadia Mono",monospace;color:var(--mo);min-height:28px;cursor:pointer}
+.dai b{color:var(--chu);font-family:"Segoe UI",system-ui,sans-serif;font-size:12px;letter-spacing:.3px;white-space:nowrap}
+.dai span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+main{flex:1;min-height:0;position:relative}
+iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--nen);display:none}
+iframe.on{display:block}
+#tl{position:absolute;inset:0;overflow:auto;padding:16px 20px;display:none}
+#tl.on{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:14px;align-content:start}
+@media(max-width:1000px){#tl.on{grid-template-columns:minmax(0,1fr)}}
+.o{background:var(--o);border:1px solid var(--vien);border-radius:12px;padding:12px 16px;min-width:0}
+.o h2{margin:0 0 8px;font-size:15px}
+.o h2 small{color:var(--mo);font-weight:400;font-size:12.5px;margin-left:6px}
+table{width:100%;border-collapse:collapse}
+td{padding:6px 6px;border-bottom:1px solid var(--vien);vertical-align:top;font-size:13px}
+.x{color:var(--xanh)}.v{color:var(--vang)}.d{color:var(--do)}.m{color:var(--mo)}.c{color:#58a6ff}
+#log{height:calc(100vh - 210px);min-height:300px;overflow:auto;font:12.5px/1.5 Consolas,"Cascadia Mono",monospace;white-space:pre-wrap;word-break:break-word}
+#log div{padding:1px 0}
+.giai{color:var(--mo);font-size:13px;margin:6px 0 0}
+.giai li{margin:3px 0}
+
+/* 05/11 đại ca: "tao muốn chat trực tiếp trên web để claude phản hồi luôn" — ô chat Claude nổi góc phải dưới, mọi tab */
+#cc-nut{position:fixed;right:18px;bottom:18px;z-index:50;background:#d97757;color:#fff;border:0;border-radius:24px;padding:11px 18px;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.45)}
+#cc-nut .cham{display:inline-block;width:9px;height:9px;border-radius:50%;background:#fff;margin-left:6px;opacity:.4}
+#cc-nut.dang .cham{animation:ccnh 1s infinite;opacity:1}
+@keyframes ccnh{50%{opacity:.2}}
+#cc{position:fixed;right:18px;bottom:70px;z-index:50;width:min(560px,94vw);height:min(720px,82vh);background:var(--o);border:1px solid var(--vien);border-radius:14px;display:none;flex-direction:column;box-shadow:0 12px 40px rgba(0,0,0,.55)}
+#cc.mo{display:flex}
+#cc .dau{padding:10px 14px;border-bottom:1px solid var(--vien);display:flex;gap:8px;align-items:center;font-size:13px}
+#cc .dau b{font-size:15px}
+#cc .ds{flex:1;overflow:auto;padding:10px 14px;display:flex;flex-direction:column;gap:10px;font-size:13.5px}
+#cc .tn{max-width:88%;padding:8px 11px;border-radius:11px;white-space:pre-wrap;word-break:break-word;line-height:1.45}
+#cc .tn.dc{align-self:flex-end;background:var(--chon);color:#fff}
+#cc .tn.cl{align-self:flex-start;background:var(--o2);border:1px solid var(--vien)}
+#cc .tn.loi{border-color:var(--do)}
+#cc .tn .gio{font-size:11px;color:var(--mo);margin-top:4px}
+#cc .tn.dc .gio{color:#dbe4ff}
+#cc .bc{font-size:12px;color:var(--mo);padding:6px 14px;border-top:1px dashed var(--vien);max-height:120px;overflow:auto}
+#cc .go{display:flex;gap:8px;padding:10px;border-top:1px solid var(--vien)}
+#cc textarea{flex:1;resize:none;height:62px;background:var(--o2);color:var(--chu);border:1px solid var(--vien);border-radius:9px;padding:8px;font:inherit;font-size:13.5px}
+#cc .go button{background:#d97757;color:#fff;border:0;border-radius:9px;padding:0 16px;font-weight:800;cursor:pointer}
+#cc .canh{background:rgba(240,82,82,.12);color:var(--do);padding:8px 12px;font-size:12.5px;border-bottom:1px solid var(--vien)}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>🎬 XƯỞNG VIDEO</h1>
+  <button class="tab" data-t="quan-ly">🗂 Quản lý file</button>
+  <button class="tab" data-t="tu-lam">⚙ Tự làm<span class="cham"></span></button>
+  <button class="tab" data-t="cat-ghep">✂ Cắt ghép</button>
+  <button class="tab" data-t="one-short">🎙 One short</button>
+  <button class="tab" data-t="theo-ngay">📅 Theo ngày</button>
+  <button class="tab" data-t="dung">🎞 Dựng video</button>
+  <button class="tab" data-t="content">✍ Content</button>
+  <button class="tab" data-t="dang-bai">📤 Đăng bài</button>
+  <span class="sp"></span>
+  <span class="m" id="tt" style="font-size:13px;max-width:340px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></span>
+  <button id="nut" title="Quét LocalSend → gom video ngày mới vào lô dd-mm → chạy hết quy trình lô">▶ TỰ LÀM</button>
+</header>
+<div class="dai" id="dai" title="Bấm để xem toàn bộ dòng đang làm"><b>ĐANG LÀM</b><span id="dai-chu">—</span></div>
+<main>
+  <div id="tl">
+    <div>
+      <div class="o"><h2>Các bước <small id="buoc-tt"></small></h2><table id="buoc"></table>
+        <ol class="giai">
+          <li>Quét thư mục nhận LocalSend, video mới nằm rời được <b>cắt</b> vào <code>LOCAL SEND\&lt;dd-mm&gt;</code> theo ngày quay.</li>
+          <li>Mỗi lô mới: <code>quy_trinh_lo --chay noi</code> (QR, phân mặt, trang, win, lồng thoại, ảnh, cắt) → <code>content</code> → <code>dung</code> (dựng ND + lồng voice one short) → kiểm trạng thái.</li>
+          <li>Việc cần người hoặc Claude (đọc giá trang, CapCut, mắt duyệt ảnh, duyệt video) hiện ở bước kiểm; máy làm tiếp phần không phụ thuộc.</li>
+          <li>Video làm xong mang tên <b>CHỜ DUYỆT</b>; đại ca duyệt mới thành <b>XONG</b> cho bảng đăng bài.</li></ol></div>
+      <div class="o" style="margin-top:14px"><h2>Tiến trình đang chạy trên máy <small>quét mỗi 5 giây</small></h2><table id="ps"></table></div>
+    </div>
+    <div class="o"><h2>Nhật ký từng dòng <small id="log-tt">cập nhật mỗi giây</small></h2><div id="log"></div></div>
+  </div>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const gio = ts => new Date(ts * 1000).toLocaleTimeString('vi-VN', {hour12: false});
+// 05/11/2026 đại ca: "gộp các tool nhỏ vào 1 tool hoàn chỉnh luôn" — mọi web tool là một tab của khung này (Content 8778, Đăng bài 8780 thêm 05/11)
+const SRC = {'quan-ly': '/xuong-video/quan-ly/', 'cat-ghep': '/xuong-video/cat-ghep/', 'theo-ngay': '/xuong-video/theo-ngay/', 'one-short': '/xuong-video/one-short/', 'dung': '/xuong-video/chi-tren-may/?ten=D%E1%BB%B1ng%20video', 'content': '/xuong-video/chi-tren-may/?ten=Content', 'dang-bai': 'https://lambuibg-spec.github.io/bang-dang-bai/'};
+const CONG_TAB = {'8777': 'dung', '8778': 'content', '8780': 'dang-bai'};
+const KHUNG = {};
+let TAB = 'quan-ly', SAU = 0, CHAY = false, BAN = false;
+
+function moTab(t, url) {
+  TAB = t;
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  $('#tl').classList.toggle('on', t === 'tu-lam');
+  Object.values(KHUNG).forEach(f => f.classList.remove('on'));
+  if (t === 'tu-lam') return;
+  let f = KHUNG[t];
+  if (!f) {                                          // mỗi trang một khung, tạo khi mở lần đầu, giữ nguyên khi đổi tab (không mất chỗ đang xem)
+    f = KHUNG[t] = document.createElement('iframe');
+    f.src = url || SRC[t];
+    f.onload = () => noiLink(f);
+    $('main').appendChild(f);
+  } else if (url && f.src !== url) f.src = url;
+  f.classList.add('on');
+}
+function noiLink(f) {                                // link trong trang cũ (Quản lý ↔ Theo ngày ↔ Cắt ghép ↔ Dựng 8777) mở đúng tab trong khung này
+  let d;
+  try { d = f.contentDocument; } catch (e) { return; }
+  if (!d) return;
+  d.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a || a.target === '_blank' && !/:87(77|78|80)\//.test(a.href) && !a.dataset.tab) return;
+    const u = new URL(a.href, location.href);
+    const t = CONG_TAB[u.port] || u.origin === location.origin && {'/xuong-video/quan-ly/': 'quan-ly', '/xuong-video/theo-ngay/': 'theo-ngay', '/xuong-video/cat-ghep/': 'cat-ghep', '/xuong-video/one-short/': 'one-short'}[u.pathname];
+    if (!t) return;
+    e.preventDefault();
+    moTab(t, u.href);
+  }, true);
+}
+document.querySelectorAll('.tab').forEach(b => b.onclick = () => moTab(b.dataset.t));
+$('#dai').onclick = () => moTab('tu-lam');
+
+const LOAI = {ok: 'x', loi: 'd', canh: 'v', info: ''};
+const TT_BUOC = {dang: ['▶ đang chạy', 'c'], xong: ['✓ xong', 'x'], loi: ['✕ có lỗi', 'd'], dung: ['■ dừng', 'v']};
+async function hoi() {
+  if (BAN) return;
+  BAN = true;
+  try {
+    const r = await (await fetch('/api/tu_lam?sau=' + SAU)).json(), log = $('#log'), cuoi = log.scrollHeight - log.scrollTop - log.clientHeight < 40;
+    for (const d of r.dong) {
+      const e = document.createElement('div');
+      e.innerHTML = `<span class="m">${gio(d.ts)}</span> <span class="c">[${esc(d.nhan)}]</span> <span class="${LOAI[d.loai] || ''}">${esc(d.chu)}</span>`;
+      log.appendChild(e);
+    }
+    while (log.children.length > 1500) log.firstChild.remove();
+    if (r.dong.length && cuoi) log.scrollTop = log.scrollHeight;
+    SAU = r.id;
+    const moi = r.dong[r.dong.length - 1];
+    if (moi) $('#dai-chu').innerHTML = `<span class="m">${gio(moi.ts)}</span> [${esc(moi.nhan)}] <span class="${LOAI[moi.loai] || ''}">${esc(moi.chu)}</span>`;
+    CHAY = r.chay;
+    $('#nut').textContent = CHAY ? '■ DỪNG' : '▶ TỰ LÀM';
+    $('#nut').classList.toggle('dung', CHAY);
+    document.querySelector('.tab[data-t="tu-lam"]').classList.toggle('chay', CHAY);
+    $('#tt').textContent = (CHAY ? 'đang làm: ' : '') + r.ghi_chu + (r.cho_gom ? ` · ${r.cho_gom} video mới chờ gom ở LocalSend` : '');
+    $('#buoc-tt').textContent = r.bat_dau ? `lượt bắt đầu ${gio(r.bat_dau)}${r.xong && !CHAY ? ' · kết thúc ' + gio(r.xong) : ''}` : '';
+    $('#buoc').innerHTML = r.buoc.map(b => { const [chu, cls] = TT_BUOC[b.tt] || [b.tt, ''];
+      const phut = Math.round(((b.xong || Date.now() / 1000) - b.bat_dau) / 60);
+      return `<tr><td class="c" style="white-space:nowrap">${esc(b.lo)}</td><td>${esc(b.ten)}</td><td class="${cls}" style="white-space:nowrap">${chu}</td><td class="m" style="white-space:nowrap">${phut} phút</td></tr>`; }).join('')
+      || `<tr><td class="m">${r.bat_dau ? (CHAY ? 'Đang quét LocalSend…' : 'Lượt vừa rồi không có lô nào cần chạy quy trình.') : 'Chưa chạy lượt nào. Bấm ▶ TỰ LÀM ở góc phải.'}</td></tr>`;
+  } catch (e) {
+    $('#tt').textContent = 'mất kết nối tool 8779';
+  } finally { BAN = false; }
+}
+async function tienTrinh() {
+  if (TAB !== 'tu-lam') return;
+  try {
+    const ds = await (await fetch('/api/dang_chay')).json();
+    $('#ps').innerHTML = ds.filter(v => v.script !== 'day_web_online').map(v => `<tr><td>${esc(v.bieu)}</td><td>${esc(v.viec.replace('Việc khác: ', ''))}${v.ma ? ` <span class="c">${esc(v.ma)}</span>` : ''}<div class="m">${esc(v.tham)}</div></td>
+      <td class="m" style="white-space:nowrap">${v.tong ? v.xong + '/' + v.tong + ' · ' : ''}${Math.round(v.giay / 60)} phút</td></tr>`).join('') || '<tr><td class="m">Không có việc cắt ghép nào đang chạy.</td></tr>';
+  } catch (e) { $('#ps').innerHTML = '<tr><td class="d">không đọc được danh sách tiến trình</td></tr>'; }
+}
+$('#nut').onclick = async () => {
+  if (!CHAY && !confirm('TỰ LÀM: quét LocalSend, cắt video ngày mới vào lô dd-mm, rồi chạy hết quy trình lô (có lồng voice TTS trả phí theo luật). Bắt đầu?')) return;
+  if (CHAY && !confirm('DỪNG Tự làm? Bước đang chạy sẽ bị dừng ngay.')) return;
+  const r = await (await fetch('/api/tu_lam', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-Tu-Lam': '1'}, body: JSON.stringify({hanh_dong: CHAY ? 'dung' : 'bat'})})).json();
+  if (!r.ok) alert(r.tt);
+  if (!CHAY) moTab('tu-lam');
+  hoi();
+};
+moTab('quan-ly');                                    // đại ca: mở đầu luôn là quản lý file
+hoi(); tienTrinh();
+setInterval(hoi, 1000);
+setInterval(tienTrinh, 5000);
+</script>
+<button id="cc-nut" title="Chat với Claude — Claude đọc / sửa tool, chạy lệnh, trả lời ngay trên web">💬 Claude<span class="cham"></span></button>
+<div id="cc"><div class="dau"><b>Claude</b><span id="cc-tt" style="color:var(--mo)"></span><span style="margin-left:auto"></span>
+  <button id="cc-dong" style="background:none;border:0;color:var(--mo);font-size:18px;cursor:pointer">✕</button></div>
+  <div id="cc-canh"></div><div class="ds" id="cc-ds"></div><div class="bc" id="cc-bc" style="display:none"></div>
+  <div class="go"><textarea id="cc-o" placeholder="Nhắn Claude… (Enter gửi, Shift+Enter xuống dòng)"></textarea><button id="cc-gui">Gửi</button></div></div>
+<script>
+// ─── 05/11: ô chat Claude (claude_may.py, một lần đăng nhập chung cho mọi tool) ───
+(function () {
+  const C = {sau: 0, tin: [], mo: localStorage.ccMo === '1', d: null};
+  const $c = s => document.querySelector(s);
+  const escc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+  const gio = t => new Date(t * 1000).toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'});
+  function ve() {
+    const d = C.d || {};
+    $c('#cc').classList.toggle('mo', C.mo);
+    $c('#cc-nut').classList.toggle('dang', !!d.dang);
+    $c('#cc-tt').textContent = d.dang ? '● đang làm' + (d.cho ? ' · ' + d.cho + ' tin chờ' : '') : (d.dang_nhap ? 'sẵn sàng' : '');
+    $c('#cc-canh').innerHTML = d.dang_nhap === false ? `<div class="canh">${escc(d.ly)}</div>` : '';
+    const ds = $c('#cc-ds'), cuoi = ds.scrollHeight - ds.scrollTop - ds.clientHeight < 40;
+    ds.innerHTML = C.tin.map(x => `<div class="tn ${x.nguoi === 'Claude' ? 'cl' : 'dc'}${x.loi ? ' loi' : ''}">${escc(x.chu)}<div class="gio">${escc(x.nguoi)} · ${gio(x.luc)}${x.giay ? ' · ' + x.giay + ' s' : ''}</div></div>`).join('')
+      || '<div style="color:var(--mo)">Nhắn Claude bất cứ việc gì về tool: hỏi số liệu lô, nhờ sửa code, chạy lại một khâu… Claude làm xong trả lời ở đây.</div>';
+    if (cuoi) ds.scrollTop = ds.scrollHeight;
+    const bc = $c('#cc-bc');
+    bc.style.display = d.dang ? '' : 'none';
+    bc.innerHTML = d.dang ? (d.buoc || []).map(b => `<div>${gio(b.luc)} · ${escc(b.chu)}</div>`).join('') + `<div><b>${escc(d.viec || '')}</b></div>` : '';
+    bc.scrollTop = bc.scrollHeight;
+  }
+  async function tai() {
+    try {
+      const d = await fetch('/api/claude_chat?sau=' + C.sau).then(r => r.json());
+      C.d = d; if (d.tin.length) { C.tin = C.tin.concat(d.tin).slice(-300); C.sau = d.tin[d.tin.length - 1].id; }
+      ve();
+    } catch (e) { /* server khởi động lại */ }
+    setTimeout(tai, C.d && C.d.dang ? 1500 : (C.mo ? 4000 : 15000));
+  }
+  async function gui() {
+    const o = $c('#cc-o'), chu = o.value.trim(); if (!chu) return;
+    o.value = '';
+    const r = await fetch('/api/claude_chat', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-Claude-Chat': '1'}, body: JSON.stringify({chu})}).then(r => r.json());
+    if (!r.ok) alert(r.tt || 'không gửi được');
+    const d = await fetch('/api/claude_chat?sau=' + C.sau).then(r => r.json());
+    C.d = d; if (d.tin.length) { C.tin = C.tin.concat(d.tin); C.sau = d.tin[d.tin.length - 1].id; } ve();
+  }
+  $c('#cc-nut').onclick = () => { C.mo = !C.mo; localStorage.ccMo = C.mo ? '1' : '0'; ve(); if (C.mo) $c('#cc-o').focus(); };
+  $c('#cc-dong').onclick = () => { C.mo = false; localStorage.ccMo = '0'; ve(); };
+  $c('#cc-gui').onclick = gui;
+  $c('#cc-o').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); gui(); } });
+  tai();
+})();
+</script>
+</body>
+</html>

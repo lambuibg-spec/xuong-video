@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="vi">
+<head><meta name="robots" content="noindex"><meta name="referrer" content="no-referrer"><script>
+(()=>{const B="/xuong-video/",BO=["_", "moi", "sau", "t", "v"],THAT=window.fetch.bind(window);let DU=null;
+const nap=()=>THAT(B+'du_lieu.json?t='+Date.now()).then(r=>r.json()).then(d=>{DU=d;return d});let CHO=nap();
+const khoa=u=>{const x=new URL(u,location.href);let p=x.pathname;if(p.startsWith(B))p='/'+p.slice(B.length);
+ const q=[...x.searchParams].filter(([k])=>!BO.includes(k)).sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:(a[1]<b[1]?-1:1));
+ return p+(q.length?'?'+new URLSearchParams(q).toString():'')};
+const bam=s=>{let a=0x811c9dc5,b=5381;for(const c of new TextEncoder().encode(s)){a=Math.imul(a^c,0x01000193)>>>0;b=(Math.imul(b,33)^c)>>>0}
+ return a.toString(16).padStart(8,'0')+b.toString(16).padStart(8,'0')};
+const maAnh=s=>{const p=new URL(s,location.href).searchParams.get('p')||'';return p[0]==='~'?p.slice(1,17):bam(khoa(s))};
+let bao=0;const chiXem=()=>{if(Date.now()-bao>4000){bao=Date.now();const d=document.createElement('div');
+ d.textContent='Bản online chỉ xem — muốn bấm chạy / duyệt thì mở xưởng trên máy.';
+ d.style.cssText='position:fixed;left:50%;top:12px;transform:translateX(-50%);background:#c0392b;color:#fff;padding:10px 16px;border-radius:8px;z-index:99999;font:600 14px sans-serif';
+ document.body.appendChild(d);setTimeout(()=>d.remove(),3500)}};
+const js=v=>new Response(JSON.stringify(v??{}),{headers:{'Content-Type':'application/json'}});
+window.fetch=async(u,o)=>{const s=typeof u==='string'?u:(u&&u.url)||String(u);const k=khoa(s);
+ if(!/^\/(api\/|anh|file)/.test(k))return THAT(u,o);
+ if(o&&o.method&&o.method.toUpperCase()!=='GET'){chiXem();return js({ok:false,loi:'Bản online chỉ xem'})}
+ await CHO;if(k.startsWith('/api/'))return js(DU.api[k]);
+ const f=DU.anh[maAnh(s)];if(f)return THAT(B+f);return new Response('',{status:404})};
+const sua=n=>{if(n.tagName==='IMG'||n.tagName==='VIDEO'||n.tagName==='SOURCE'){const s=n.getAttribute('src')||'';
+ if(/^\/(anh|file)/.test(s)){const k=maAnh(s);n.removeAttribute('src');CHO.then(d=>{if(d.anh[k])n.setAttribute('src',B+d.anh[k])})}}};
+new MutationObserver(m=>m.forEach(x=>{if(x.type==='attributes')sua(x.target);else x.addedNodes.forEach(n=>{if(n.nodeType===1){sua(n);n.querySelectorAll&&n.querySelectorAll('img,video,source').forEach(sua)}})}))
+ .observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src']});
+CHO.then(d=>{const u=(d.ham||{})['8779'];if(window.top===window&&u){const a=document.createElement('a');a.href=u+'/';a.target='_blank';a.rel='noopener';
+ a.textContent='▶ Mở bản BẤM ĐƯỢC (có video, nút chạy)';a.title='Vào thẳng xưởng trên PC qua đường hầm — lần đầu nhập mã';
+ a.style.cssText='position:fixed;right:14px;bottom:14px;z-index:99999;background:#16a34a;color:#fff;padding:12px 16px;border-radius:10px;font:700 15px sans-serif;text-decoration:none;box-shadow:0 4px 14px #0006';
+ document.body.appendChild(a)}});
+CHO.then(d=>{if(window.top===window&&Date.now()/1000-d.luc>7200){const b=document.createElement('div');b.textContent='Số liệu đã cũ hơn 2 giờ: máy xưởng có thể đang tắt.';
+ b.style.cssText='background:#c0392b;color:#fff;padding:10px 16px;font:700 14px sans-serif';document.body.prepend(b)}});
+setInterval(()=>{const a=document.activeElement;if(!a||!/INPUT|TEXTAREA|SELECT/.test(a.tagName))location.reload()},600000);
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>(online) Theo ngày nhận</title>
+<style>
+:root{--nen:#0f1216;--o:#171b21;--o2:#1e232b;--vien:#2a3039;--chu:#e6e9ee;--mo:#8b95a3;--xanh:#3fb950;--vang:#d29922;--do:#f05252;--ad:#e5484d;--mt:#d4a72c;--chon:#2f6feb;--lam:#79b8ff}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--nen);color:var(--chu);font:14px/1.45 "Segoe UI",system-ui,sans-serif}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:10px 20px;background:var(--o);border-bottom:1px solid var(--vien);flex-wrap:wrap}
+.top h1{margin:0;font-size:16px;letter-spacing:.3px}
+.top .dem{color:var(--mo);font-size:13px}
+.top .sp{flex:1}
+.nut{background:var(--o2);border:1px solid var(--vien);border-radius:8px;padding:7px 12px;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.nut:hover{border-color:#4b5563}
+.dslo{display:flex;gap:8px;overflow-x:auto;padding:12px 20px 4px}
+.lo{flex:none;background:var(--o);border:1px solid var(--vien);border-radius:10px;padding:8px 14px;text-align:left;min-width:110px}
+.lo b{display:block;font-size:15px}
+.lo span{font-size:12px;color:var(--mo)}
+.lo.on{border-color:var(--chon);background:#16233a}
+.wrap{padding:8px 20px 40px;max-width:1500px}
+.h2{display:flex;align-items:baseline;gap:4px 10px;margin:18px 0 10px;flex-wrap:wrap}
+.h2 b{white-space:nowrap}
+.h2 span{word-break:break-all}
+.h2 b{font-size:16px}
+.h2 span{color:var(--mo);font-size:13px}
+.o-so{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.tile{background:var(--o);border:1px solid var(--vien);border-radius:12px;padding:12px 14px}
+.tile .k{font-size:12px;color:var(--mo)}
+.tile .v{font-size:26px;font-weight:600;margin:2px 0}
+.tile .v small{font-size:14px;color:var(--mo);font-weight:400}
+.tile .ct{font-size:12px;color:var(--mo);display:flex;flex-direction:column;gap:2px}
+.tile .ct div{display:flex;justify-content:space-between;gap:8px}
+.tile .ct b{color:var(--chu);font-weight:600}
+.bar{height:6px;border-radius:3px;background:#2a3039;overflow:hidden;margin-top:6px}
+.bar u{display:block;height:100%;background:var(--xanh)}
+.viec{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:10px}
+.nhom{background:var(--o);border:1px solid var(--vien);border-radius:12px;overflow:hidden}
+.nhom .t{padding:9px 14px;border-bottom:1px solid var(--vien);display:flex;gap:8px;align-items:center;font-weight:600;font-size:13px}
+.nhom .t .so{margin-left:auto;font-weight:400;color:var(--mo)}
+.nhom ul{list-style:none;margin:0;padding:6px 0;max-height:320px;overflow:auto}
+.nhom li{padding:6px 14px;font-size:13px;border-bottom:1px solid #1d2229}
+.nhom li:last-child{border-bottom:0}
+.nhom li .m{display:flex;gap:6px;align-items:center}
+.nhom li .d{color:var(--mo);font-size:12px;margin-top:2px;word-break:break-word}
+.kenh{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:1px 7px;border-radius:20px;border:1px solid var(--vien);color:var(--mo);white-space:nowrap}
+.kenh i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.bang{width:100%;border-collapse:collapse;background:var(--o);border:1px solid var(--vien);border-radius:12px;overflow:hidden}
+.bang th{font-size:12px;color:var(--mo);font-weight:500;text-align:left;padding:8px 10px;border-bottom:1px solid var(--vien);background:var(--o2)}
+.bang td{padding:8px 10px;border-bottom:1px solid #1d2229;vertical-align:top;font-size:13px}
+.bang tr.sp{cursor:pointer}
+.bang tr.sp:hover td{background:#1a2029}
+.bang .ten{font-weight:600}
+.bang .ten small{display:block;color:var(--mo);font-weight:400;font-size:12px}
+.buoc{display:flex;gap:6px;flex-wrap:wrap}
+.b{font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid var(--vien);color:var(--mo);white-space:nowrap}
+.b.xong{color:var(--xanh);border-color:#2e5f3a}
+.b.do{color:var(--vang);border-color:#6b5317}
+.b.chua{color:#9aa4b2}
+.tt{font-size:11px;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.tt.xong{background:#16301d;color:var(--xanh)}
+.tt.dang{background:#33280f;color:var(--vang)}
+.mo-rong td{background:#12161b}
+.mo-rong .khoi{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.mo-rong h4{margin:0 0 6px;font-size:13px}
+.mo-rong ul{margin:0;padding-left:18px;color:var(--mo);font-size:12px}
+.mo-rong li{margin:2px 0;word-break:break-word}
+.mo-rong a{color:var(--lam)}
+.loc{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.loc button{background:var(--o);border:1px solid var(--vien);border-radius:20px;padding:4px 10px;font-size:12px}
+.loc button.on{background:#2a3546;border-color:#3d4b61}
+.cl{font-size:12px}
+.cl td{font-size:12px;padding:5px 10px}
+.rong{color:var(--mo);text-align:center;padding:60px 0}
+.chay{color:var(--vang);font-size:12px}
+.dc{background:#14261a;border:1px solid #2e5f3a;border-radius:12px;padding:10px 14px;margin:14px 0 6px}
+.dc.nghi{background:var(--o);border-color:var(--vien)}
+.dc-t{font-weight:600;font-size:15px}
+.dc-t small{font-weight:400;color:var(--mo);font-size:12px}
+.dc-v{display:grid;grid-template-columns:minmax(180px,1.3fr) minmax(120px,1.5fr) 110px minmax(80px,1fr) 70px;gap:10px;align-items:center;font-size:14px;padding:6px 0;border-top:1px solid #1f3a27;margin-top:6px}
+.dc-m{color:var(--mo);font-size:13px;word-break:break-word}
+.dc-p b{font-size:16px}
+.dc-b{margin:0}
+.dc-g{color:var(--mo);font-size:12px;text-align:right}
+.ngay-td{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:baseline;background:var(--o);border:1px solid var(--vien);border-radius:12px;padding:10px 14px;margin:8px 0}
+.ngay-td .td{font-size:14px}
+.dcq{background:var(--o);border:1px solid var(--vien);border-left:4px solid var(--vang);border-radius:12px;padding:10px 14px;margin:8px 0}
+.dcq.khop{border-left-color:var(--xanh)}.dcq.lech{border-left-color:var(--do)}
+.dcq-t{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline}.dcq-t small{color:var(--mo)}
+.dcq .kl{font-weight:700}.dcq.khop .kl{color:var(--xanh)}.dcq.lech .kl{color:var(--do)}.dcq.cho .kl{color:var(--vang)}
+.dcq-so{display:flex;flex-wrap:wrap;gap:4px 16px;margin:6px 0;font-size:14px}.dcq-so b{font-size:16px}.dcq-so .do{color:var(--do)}
+.dcq-n{color:var(--vang);font-size:13px;margin-top:6px}
+.dcq-tq{font-size:14px;margin:4px 0 6px}.dcq-tq b{font-size:16px}
+.dcq-sp{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:8px;margin-top:6px}
+.dcq-c{display:flex;gap:10px;background:var(--o2);border:1px solid var(--vien);border-left:3px solid var(--do);border-radius:10px;padding:8px}
+.dcq-c.ok{border-left-color:var(--xanh)}
+.dcq-c img,.dcq-c .kh-anh{width:64px;height:64px;object-fit:cover;border-radius:8px;flex:none;background:var(--o)}
+.dcq-c .kh-anh{display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--mo)}
+.dcq-c .nd{min-width:0;flex:1}.dcq-c .dt small{color:var(--mo)}.dcq-c .tsp{color:var(--mo);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dcq-c .kl2{font-weight:700;font-size:12px}.dcq-c.ok .kl2{color:var(--xanh)}.dcq-c.le .kl2{color:var(--do)}
+.dcq-c .ph{margin-top:5px;font-size:13px}.dcq-c .ph small{color:var(--mo)}.dcq-c .b.do{color:var(--do);border-color:#6b2a2a}
+@media(max-width:600px){.dcq-sp{grid-template-columns:1fr}}
+.ngay-td .td b{font-size:17px}
+.ngay-td small{color:var(--mo)}
+.ngay-td .con{color:var(--vang);font-size:13px}
+.dg{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;background:var(--o2);border:1px solid var(--vien);border-radius:8px;padding:6px 9px;margin-top:5px;font-size:15px;text-align:left}
+.dg:hover{border-color:#4b5563}
+.dg.on{border-color:var(--chon);background:#16233a}
+.dg b{font-size:16px}
+.dg .kenh{font-size:14px;padding:2px 9px}
+.chi-tiet{background:#12161b;border:1px solid var(--chon);border-radius:12px;padding:12px 14px;margin:12px 0;position:relative}
+.chi-tiet .dong-ct{position:absolute;right:12px;top:10px}
+.ct-h{font-size:14px;margin:2px 90px 10px 0}
+.ct-h b{font-size:16px}
+.ct-sp{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+@media (max-width:700px){.dc-v{grid-template-columns:1fr 1fr}.dc-g{text-align:left}}
+@media (max-width:700px){.top{padding:10px 16px}.wrap{padding:8px 16px 40px}.dslo{padding:12px 16px 4px}.bang .an{display:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>📅 THEO NGÀY NHẬN</h1><span class="dem" id="dem"></span>
+  <span class="sp"></span>
+  <button class="nut" id="lam-moi">↻ Làm mới</button>
+  <a class="nut" href="/xuong-video/quan-ly/">Quản lý sản phẩm</a>
+  <a class="nut" href="/xuong-video/cat-ghep/">Tool cắt ghép</a>
+</header>
+<nav class="dslo" id="dslo"></nav>
+<main class="wrap" id="noi"><div class="rong">Đang đọc…</div></main>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const MAU = {'MAI THI DAILY': 'var(--mt)', 'MAI ÁO ĐỎ': 'var(--ad)'};
+const NGAN = {'MAI THI DAILY': 'Mai Thi', 'MAI ÁO ĐỎ': 'Áo Đỏ'};
+const kenh = k => `<span class="kenh"><i style="background:${MAU[k] || 'var(--mo)'}"></i>${esc(NGAN[k] || k || 'chưa rõ')}</span>`;
+const gio = t => t ? new Date(t * 1000).toLocaleString('vi-VN', {hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit'}) : '—';
+const AI = {'ĐỘI QUAY': '🎥', 'TAB CẮT': '✂️', 'TAB CONTENT': '✍️', 'TAB DỰNG': '🎬', 'ĐẠI CA DUYỆT': '👀'};
+let LO = null, DATA = null, MO = new Set(), LOC_CLIP = 'chua', CT = null, DC = null, LOC_DC = 'lech';
+try { MO = new Set(JSON.parse(localStorage.getItem('tn_mo') || '[]')); } catch (e) {}
+
+// 29/10 đại ca: "Nhiều fodel nhận trong 1 ngày thì cũng code gộp nó vào thôi. rồi phân loại bên trong" — chọn theo NGÀY, bên trong chia từng thư mục
+async function dsLo() {
+  const ds = await (await fetch('/api/ngay')).json();
+  const hs = new URLSearchParams(location.hash.slice(1));
+  const h = hs.get('ngay') || hs.get('lo');
+  LO = (ds.find(x => x.ngay === h || x.lo.includes(h)) || ds[0] || {}).ngay;
+  $('#dslo').innerHTML = ds.map(x => `<button class="lo${x.ngay === LO ? ' on' : ''}" data-lo="${esc(x.ngay)}"><b>${esc(x.ngay)}</b><span>${x.lo.length ? `${x.so_clip} file${x.lo.length > 1 ? ` · ${x.lo.length} thư mục` : ''}` : `${x.o_tich || 0} ô tích · không có video trên máy này`} · ${gio(x.moc)}</span></button>`).join('');
+  $('#dslo').querySelectorAll('.lo').forEach(b => b.onclick = () => { location.hash = 'ngay=' + encodeURIComponent(b.dataset.lo); });
+  if (LO) taiLo(); else $('#noi').innerHTML = '<div class="rong">Chưa có lô nào trong LOCAL SEND</div>';
+}
+
+async function taiLo(im, ngam) {
+  if (!im && !ngam) $('#noi').innerHTML = '<div class="rong">Đang tổng hợp ngày ' + esc(LO) + '…</div>';
+  const r = await fetch('/api/bao_cao_ngay?ngay=' + encodeURIComponent(LO) + (im ? '&moi=1' : ''));
+  if (!r.ok) { if (!ngam) $('#noi').innerHTML = '<div class="rong">Lỗi đọc ngày ' + esc(LO) + '</div>'; return; }
+  DATA = await r.json();
+  const y = scrollY;
+  ve();
+  if (ngam) scrollTo(0, y);
+  taiDangChay();
+}
+
+// 29/10 21h24 đại ca: "các con số % cắt và số video cắt ở trên này có cập nhật realtime ko ?" — KHI CÓ VIỆC ĐANG CHẠY thì tự cập nhật số mỗi 60 s
+// (giữ nguyên chỗ đang xem, bảng đang mở); không có việc gì chạy thì đứng yên, bấm ↻ Làm mới.
+let HEN = null;
+function henCapNhat() {
+  clearTimeout(HEN);
+  if (DC && DC.length) HEN = setTimeout(() => taiLo(false, true), 60000);
+}
+
+// việc đang chạy thật trên máy (quét tiến trình) — tải riêng, nhẹ
+async function taiDangChay() {
+  try { DC = await (await fetch('/api/dang_chay?ngay=' + encodeURIComponent(LO))).json(); } catch (e) { DC = null; }
+  veDangChay();
+  henCapNhat();
+}
+function veDangChay() {
+  const el = $('#dang-chay'); if (!el) return;
+  if (!DC) { el.innerHTML = '<div class="dc-t">Không dò được việc đang chạy</div>'; return; }
+  const luc = new Date().toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'});
+  if (!DC.length) { el.className = 'dc nghi'; el.innerHTML = `<div class="dc-t">⚪ KHÔNG CHẠY GÌ — tool đang không cắt ghép gì <small>(dò lúc ${luc}, bấm ↻ Làm mới để dò lại)</small></div>`; return; }
+  el.className = 'dc';
+  el.innerHTML = `<div class="dc-t">🟢 ĐANG CHẠY ${DC.length} việc <small>(dò lúc ${luc} · số liệu trang tự cập nhật mỗi 60 giây khi còn việc chạy · số tính lúc ${new Date((DATA && DATA.luc || 0) * 1000).toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'})})</small></div>` + DC.map(v => {
+    const p = v.tong ? Math.round(100 * v.xong / v.tong) : null;
+    return `<div class="dc-v"><span class="dc-n">${v.bieu} ${esc(v.viec)}</span><span class="dc-m">${esc(v.ma || v.tham || '')}</span>` +
+      (p != null ? `<span class="dc-p"><b>${p}%</b> ${v.xong}/${v.tong}</span><span class="bar dc-b"><u style="width:${p}%"></u></span>` : '<span class="dc-p">đang chạy</span><span></span>') +
+      `<span class="dc-g">${Math.round(v.giay / 60)} phút</span></div>`;
+  }).join('');
+}
+
+// bảng chi tiết khi bấm một dòng tổng quan
+function chiTiet(d) {
+  const {loai, gt} = CT, sp = d.san_pham;
+  const bangClip = (cs, tieuDe) => {
+    const dt = {}; cs.forEach(c => dt[c.tt] = (dt[c.tt] || 0) + 1);
+    const xong = cs.filter(c => ['ĐÃ CẮT', 'CLIP LỖI', 'DẠNG CŨ'].includes(c.tt)).length;
+    const theoSp = {};
+    cs.forEach(c => { const k = `${c.kenh}|${c.stt}`; (theoSp[k] ||= {kenh: c.kenh, stt: c.stt, n: 0, x: 0, dang: new Set()}); theoSp[k].n++; theoSp[k].dang.add(c.dang); if (['ĐÃ CẮT', 'CLIP LỖI', 'DẠNG CŨ'].includes(c.tt)) theoSp[k].x++; });
+    return `<div class="ct-h"><b>${tieuDe}</b> · ${cs.length} file · cắt xong ${xong}/${cs.length} (${cs.length ? Math.round(100 * xong / cs.length) : 0}%) · ${Object.entries(dt).map(([k, v]) => `${esc(k)} ${v}`).join(' · ')}</div>` +
+      `<div class="ct-sp">${Object.values(theoSp).sort((a, b) => (a.kenh || '').localeCompare(b.kenh || '') || (a.stt ?? 0) - (b.stt ?? 0)).map(s =>
+        `<span class="b ${s.x >= s.n ? 'xong' : 'do'}">${kenh(s.kenh)} ${s.stt != null ? 'SP' + s.stt : 'chưa rõ mã'} · ${[...s.dang].map(x => x.toLowerCase()).join(', ')} · ${s.x}/${s.n}</span>`).join('')}</div>` +
+      `<table class="bang cl"><thead><tr><th>File</th><th>Kênh · mã</th><th class="an">Dạng</th><th>Trạng thái</th><th class="an">Ghi chú</th></tr></thead><tbody>` +
+      cs.map(c => `<tr><td><a href="/file?p=${encodeURIComponent(c.path)}" target="_blank">${esc(c.clip)}</a></td><td>${kenh(c.kenh)} ${c.stt != null ? 'SP' + c.stt : ''}${c.luot ? ` <small style="color:var(--mo)">L${c.luot}C${c.canh}</small>` : ''}</td>` +
+        `<td class="an">${esc(c.dang)}</td><td><span class="tt ${c.tt === 'ĐÃ CẮT' ? 'xong' : 'dang'}">${esc(c.tt)}</span></td><td class="an" style="color:var(--mo)">${esc(c.ghi)}</td></tr>`).join('') + '</tbody></table>';
+  };
+  let h = '';
+  if (loai === 'tat') h = bangClip(d.clips, 'Tất cả file nhận');
+  if (loai === 'kenh') h = bangClip(d.clips.filter(c => (c.kenh || 'CHƯA RÕ') === gt), 'Kênh ' + (NGAN[gt] || gt));
+  if (loai === 'dang') h = bangClip(d.clips.filter(c => c.dang === gt), 'Dạng ' + gt);
+  if (loai === 'tt') h = bangClip(d.clips.filter(c => c.tt === gt), 'Trạng thái ' + gt);
+  if (loai === 'content') {
+    const ds = sp.filter(x => gt === 'os' ? x.os : x.cc);
+    h = `<div class="ct-h"><b>Content ${gt === 'os' ? 'one short' : 'dựng cắt ghép'}</b> · ${ds.length} sản phẩm</div><table class="bang cl"><thead><tr><th>Sản phẩm</th><th>Bài</th><th>Bám win</th><th class="an">Trạng thái</th></tr></thead><tbody>` +
+      ds.map(x => { const c = gt === 'os' ? x.content_os : x.content_nd; const can = gt === 'os' ? x.os.cat : 4;
+        return `<tr><td class="ten">${kenh(x.kenh)} SP${x.stt}<small>${esc(x.ten)}</small></td><td>${c ? c.bai : 0}${gt === 'os' ? ` / ${can} clip` : ''}</td>` +
+          `<td><span class="tt ${c && c.win >= c.bai && c.bai ? 'xong' : 'dang'}">${c ? c.win : 0} bám win</span></td><td class="an" style="color:var(--mo)">${esc(c ? c.trang_thai : 'CHƯA CÓ CONTENT')}</td></tr>`; }).join('') + '</tbody></table>';
+  }
+  if (loai === 'video') {
+    const vs = sp.flatMap(x => (gt === 'nd' ? x.video_nd : gt === 'os' ? x.video_os : [...x.video_os, ...x.video_nd].filter(v => v.da_dang)).map(v => ({...v, x})));
+    h = `<div class="ct-h"><b>${gt === 'nd' ? 'Video dựng' : gt === 'os' ? 'One short đã lồng voice' : 'Video đã đăng'}</b> · ${vs.length} video</div><table class="bang cl"><tbody>` +
+      (vs.map(v => `<tr><td>${kenh(v.x.kenh)} SP${v.x.stt}</td><td><a href="/file?p=${encodeURIComponent(v.path)}" target="_blank">${esc(v.ten)}</a></td><td>${v.da_dang ? '<span class="tt xong">đã đăng</span>' : '<span class="tt dang">chờ duyệt</span>'}</td></tr>`).join('') || '<tr><td>Chưa có video nào</td></tr>') + '</tbody></table>';
+  }
+  if (loai === 'sp') {
+    const ds = sp.filter(x => gt === 'xong' ? x.xong : !x.xong);
+    h = `<div class="ct-h"><b>Sản phẩm ${gt === 'xong' ? 'đã xong hết' : 'còn dở'}</b> · ${ds.length} sản phẩm</div><table class="bang cl"><thead><tr><th>Sản phẩm</th><th>Dở tới đâu</th><th class="an">Việc còn lại</th></tr></thead><tbody>` +
+      ds.map(x => { const v = d.viec.filter(v => v.kenh === x.kenh && v.stt === x.stt);
+        return `<tr><td class="ten">${kenh(x.kenh)} SP${x.stt}<small>${esc(x.ten)}</small></td><td><div class="buoc">${x.buoc.map(b => `<span class="b ${b.tong && b.xong >= b.tong ? 'xong' : b.xong ? 'do' : 'chua'}">${esc(b.ten)} ${b.xong}/${b.tong}</span>`).join('')}</div></td>` +
+          `<td class="an" style="color:var(--mo)">${v.map(v => `${AI[v.ai] || ''} ${esc(v.muc)}`).join('<br>') || '—'}</td></tr>`; }).join('') + '</tbody></table>';
+  }
+  return `<div class="chi-tiet"><button class="nut dong-ct">✕ Đóng</button>${h}</div>`;
+}
+
+// 29/10 21h20 đại ca: "KHI NHẬN 1 LÔ VIDEO, KHI CẮT XONG, SẼ PHẢI CHECK SỔ SẢN PHẨM NGÀY HÔM ĐÓ ĐỂ XEM SỐ PHIẾU QUAY ĐƯỢC TÍCH, XEM TỔNG VIDEO CÓ KHỚP VỚI PHIẾU QUAY KO"
+const oTen = o => `${o.phieu >= 100 ? 'OS' : 'P' + o.phieu} L${o.luot}${o.phieu >= 100 ? '' : 'C' + o.canh}`;
+function khoiDoiChieu(dc) {
+  if (!dc) return '';
+  if (dc.ket_luan === 'LỖI') return `<div class="dcq lech"><b>📋 Đối chiếu sổ tích phiếu quay:</b> lỗi đọc — ${esc(dc.loi)}</div>`;
+  const lop = dc.ket_luan === 'KHỚP' ? 'khop' : dc.ket_luan === 'LỆCH' ? 'lech' : 'cho';
+  const nKhongQr = dc.chua_doi.length;
+  let h = `<div class="dcq ${lop}"><div class="dcq-t"><b>📋 Đối chiếu sổ tích phiếu quay ↔ video nhận</b> <span class="kl">${dc.ket_luan === 'KHỚP' ? '✔ KHỚP' : dc.ket_luan === 'LỆCH' ? '⚠ LỆCH' : '⏳ ' + esc(dc.ket_luan)}</span>
+    <small>sổ: ${esc(dc.nguon)}</small></div>
+    <div class="dcq-so"><span>Video nhận <b>${dc.clip}</b> · đã đọc mã QR <b>${dc.clip_doi_duoc}</b>${dc.dang_do ? ` <span class="do">· chưa đọc ${dc.dang_do} (số dưới chưa đủ)</span>` : ''}</span>
+    <span>Sổ tích hôm nay <b>${dc.o_tich}</b> ô</span><span>ô tích đã có video <b>${dc.o_khop}</b></span>
+    <span class="${dc.thieu.length ? 'do' : ''}">tích mà CHƯA có video <b>${dc.thieu.length}</b></span>
+    <span class="${dc.ngoai.length ? 'do' : ''}">video mà sổ CHƯA tích <b>${dc.ngoai.length}</b></span>
+    <span>clip nhận <b>${dc.clip}</b> (đối được ${dc.clip_doi_duoc}${nKhongQr ? ` · chưa đối được ${nKhongQr}` : ''}${dc.dang_do ? ` · chưa quét ${dc.dang_do}` : ''}${dc.clip_loi.length ? ` · lỗi ${dc.clip_loi.length}` : ''})</span></div>`;
+  // 29/10 21h41 đại ca: "phân loại trên phiếu là ngày hôm đó phiếu quay được bao nhiêu sản phẩm ? là sản phẩm nào ? có ảnh ra ? và số lượt cảnh thiếu đủ như nào"
+  const sps = dc.san_pham.filter(x => x.tich), demK = {};
+  sps.forEach(x => demK[x.kenh] = (demK[x.kenh] || 0) + 1);
+  const nPh = loai => sps.reduce((a, x) => a + (x.phieu || []).filter(p => p.loai === loai && p.luot_hom_nay).length, 0);
+  h += `<div class="dcq-tq">Hôm nay sổ tích quay <b>${sps.length}</b> sản phẩm · ${Object.entries(demK).map(([k, v]) => `${kenh(k)} <b>${v}</b>`).join(' · ')} · phiếu cắt cảnh <b>${nPh('CẮT CẢNH')}</b> · phiếu one short <b>${nPh('ONE SHORT')}</b>
+    ${dc.san_pham.length > sps.length ? ` · ${dc.san_pham.length - sps.length} sản phẩm có video mà hôm nay không tích` : ''}</div>`;
+  const loc = LOC_DC === 'lech' ? dc.san_pham.filter(x => x.thieu.length || x.ngoai.length) : dc.san_pham;
+  h += `<div class="loc">${[['lech', `Chỉ sản phẩm lệch (${dc.san_pham.filter(x => x.thieu.length || x.ngoai.length).length})`], ['tat', `Tất cả (${dc.san_pham.length})`]].map(([k, v]) => `<button data-locdc="${k}" class="${LOC_DC === k ? 'on' : ''}">${v}</button>`).join('')}</div>`;
+  h += '<div class="dcq-sp">' + loc.map(x => {
+    const ok = !x.thieu.length && !x.ngoai.length;
+    return `<div class="dcq-c ${ok ? 'ok' : 'le'}">${x.anh ? `<img src="${esc(x.anh)}" loading="lazy" referrerpolicy="no-referrer" alt="">` : '<div class="kh-anh">không ảnh</div>'}<div class="nd">
+      <div class="dt">${kenh(x.kenh)} <b>SP${x.stt}</b> <span class="kl2">${ok ? '✔ đủ' : '⚠ lệch'}</span> <small>${x.khop}/${x.tich} ô tích có video · ${x.clip} clip</small></div><div class="tsp">${esc(x.ten)}</div>` +
+      (x.phieu || []).map(p => `<div class="ph"><b>${p.loai === 'ONE SHORT' ? '🎞 One short' : '✂️ Phiếu ' + p.so}</b> <small>${p.tong_luot ? `phiếu ${p.tong_luot} ${p.loai === 'ONE SHORT' ? 'nội dung' : 'lượt'} · ` : ''}hôm nay quay ${p.luot_hom_nay}</small><div class="buoc">` +
+        p.luot.map(l => { const t = l.o.filter(o => o.tich).length, v = l.o.filter(o => o.video.length).length, thieuO = l.o.filter(o => o.tich && !o.video.length), ngoaiO = l.o.filter(o => !o.tich && o.video.length);
+          const nhan = p.loai === 'ONE SHORT' ? `ND${l.so}` : `L${l.so}`;
+          const ct = p.loai === 'ONE SHORT' ? (t && v ? '✔' : t ? 'tích, chưa có video' : 'có video, chưa tích') :
+            `tích ${t}${l.canh_phieu ? '/' + l.canh_phieu : ''} cảnh · video ${v}${thieuO.length ? ' · thiếu C' + thieuO.map(o => o.canh).join(',C') : ''}${ngoaiO.length ? ' · chưa tích C' + ngoaiO.map(o => o.canh).join(',C') : ''}`;
+          return `<span class="b ${l.du ? 'xong' : thieuO.length ? 'do' : 'chua'}" title="${esc(l.o.map(o => `C${o.canh}: ${o.tich ? 'tích' : 'chưa tích' + (o.tich_ngay ? ' (tích ' + o.tich_ngay + ')' : '')} · ${o.video.join(', ') || 'không video'}`).join('\n'))}">${nhan}${l.ten && p.loai !== 'ONE SHORT' ? ' ' + esc(l.ten.slice(0, 22)) : ''} · ${ct}</span>`; }).join('') +
+        (p.luot_chua_quay.length ? `<span class="b chua">chưa quay ngày nào: ${p.luot_chua_quay.map(l => 'L' + l.so).join(', ')}</span>` : '') + '</div></div>').join('') +
+      '</div></div>';
+  }).join('') + '</div>';
+  if (nKhongQr) h += `<div class="dcq-n">Clip chưa đối được (không QR — soi hình đối chiếu sổ): ${dc.chua_doi.map(c => esc(c.clip)).join(', ')}</div>`;
+  return h + '</div>';
+}
+
+function tile(k, v, ct, pt) {
+  return `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div>${ct ? `<div class="ct">${ct}</div>` : ''}${pt != null ? `<div class="bar"><u style="width:${Math.round(pt * 100)}%"></u></div>` : ''}</div>`;
+}
+const dong = (a, b) => `<div><span>${a}</span><b>${b}</b></div>`;
+
+function ve() {
+  const d = DATA, t = d.tong;
+  $('#dem').textContent = (d.lo.length ? `Ngày ${d.ngay} · ${d.lo.length} thư mục` : `Ngày ${d.ngay} · KHÔNG CÓ VIDEO TRÊN MÁY NÀY, chỉ có sổ tích; số "tích mà chưa có video" chỉ vì video ở máy khác, không phải đội quay thiếu`) + ` · cập nhật ${gio(d.cap_nhat)}` + (d.dang_chay.length ? ' · đang chạy: ' + d.dang_chay.join(', ') : '');
+  const ttc = t.tt || {}, cat = ttc['ĐÃ CẮT'] || 0, loi = ttc['CLIP LỖI'] || 0;
+  const sp = d.san_pham, spx = sp.filter(x => x.xong).length;
+  const osAll = sp.reduce((a, x) => a + (x.os ? x.os.clip - x.os.loi : 0), 0);
+  const ndBai = sp.reduce((a, x) => a + (x.content_nd ? x.content_nd.win : 0), 0);
+  const osBai = sp.reduce((a, x) => a + (x.content_os ? x.content_os.win : 0), 0);
+  // ĐANG CHẠY — 29/10 đại ca: "1 dòng tổng quan nhìn xem tiến độ đang chạy cái gì, chạy sản phẩm nào, tới bước gì rồi, được bao nhiêu %"
+  let h = '<div id="dang-chay" class="dc"><div class="dc-t">⏳ Đang dò việc đang chạy trên máy…</div></div>';
+  // tiến độ cả ngày theo bước
+  const tong = ten => sp.reduce((a, x) => { x.buoc.filter(b => ten(b.ten)).forEach(b => { a[0] += Math.min(b.xong, b.tong); a[1] += b.tong; }); return a; }, [0, 0]);
+  const [ctX, ctT] = tong(n => n.includes('content')), [dgX, dgT] = tong(n => n.includes('lồng voice') || n === 'Video dựng');
+  const pc = (a, b) => b ? Math.round(100 * a / b) : 0;
+  const conViec = {}; d.viec.forEach(v => conViec[v.ai] = (conViec[v.ai] || 0) + 1);
+  h += `<div class="ngay-td"><b>Tiến độ ngày ${esc(d.ngay)}:</b>
+    <span class="td">✂️ Cắt <b>${pc(t.xong, t.so_file)}%</b> <small>${t.xong}/${t.so_file} file</small></span>
+    <span class="td">✍️ Content bám win <b>${pc(ctX, ctT)}%</b> <small>${ctX}/${ctT} bài</small></span>
+    <span class="td">🎬 Lồng voice / dựng <b>${pc(dgX, dgT)}%</b> <small>${dgX}/${dgT} video</small></span>
+    <span class="td">✅ Sản phẩm xong <b>${spx}/${sp.length}</b></span>
+    <span class="td con">Còn: ${Object.entries(conViec).map(([k, v]) => `${AI[k] || ''} ${esc(k.toLowerCase())} ${v}`).join(' · ') || 'không'}</span></div>`;
+  h += khoiDoiChieu(d.doi_chieu);
+  // ô tổng quan — mỗi dòng / ô BẤM ĐƯỢC (29/10 đại ca: "bấm vào dạng nào là ra dạng đó và tiến độ … sản phẩm xong hết bấm vào là ra còn dở những sản phẩm gì, dở tới đâu")
+  const nut = (loai, gt, nhan, so) => `<button class="dg${CT && CT.loai === loai && CT.gt === gt ? ' on' : ''}" data-ct="${loai}|${esc(gt)}"><span>${nhan}</span><b>${so}</b></button>`;
+  h += `<div class="h2"><b>Tổng quan</b><span>file nhận ${gio(t.nhan_tu)} → ${gio(t.nhan_den)} · ${d.lo.map(esc).join(' + ')} · bấm vào từng dòng để xem chi tiết</span></div><div class="o-so">`;
+  h += tile('Tổng file nhận', `${t.so_file} <small>file</small>`, nut('tat', '', 'Xem tất cả file', t.gb + ' GB') + dong('Số sản phẩm', t.so_ma));
+  h += tile('Kênh', Object.keys(t.kenh).length + ' <small>kênh</small>', Object.entries(t.kenh).map(([k, v]) => nut('kenh', k, kenh(k), v)).join(''));
+  h += tile('Dạng', Object.keys(t.dang).length + ' <small>dạng</small>', Object.entries(t.dang).map(([k, v]) => nut('dang', k, esc(k), v)).join(''));
+  h += tile('Tiến độ cắt', `${t.xong}<small> / ${t.so_file}</small>`, Object.entries(ttc).map(([k, v]) => nut('tt', k, esc(k), v)).join(''), t.xong / Math.max(1, t.so_file));
+  h += tile('Content bám win', `${ndBai + osBai} <small>bài</small>`, nut('content', 'nd', 'Dựng cắt ghép', ndBai) + nut('content', 'os', 'One short', `${osBai} / ${osAll} clip`), osAll ? osBai / osAll : null);
+  h += tile('Video xong', `${d.video.os_long + d.video.dung} <small>video</small>`, nut('video', 'os', 'One short đã lồng', d.video.os_long) + nut('video', 'nd', 'Video dựng', d.video.dung) + nut('video', 'dang', 'Đã đăng', d.video.da_dang), (d.video.os_long + d.video.dung) / Math.max(1, osBai + ndBai));
+  h += tile('Sản phẩm xong hết', `${spx}<small> / ${sp.length}</small>`, nut('sp', 'do', 'Còn dở', sp.length - spx) + nut('sp', 'xong', 'Đã xong', spx), spx / Math.max(1, sp.length));
+  h += '</div>';
+  if (CT) h += chiTiet(d);
+
+  // thư mục nhận trong ngày
+  h += `<div class="h2"><b>Thư mục nhận trong ngày</b><span>${d.thu_muc.length} thư mục</span></div>`;
+  h += '<table class="bang"><thead><tr><th>Thư mục</th><th>File</th><th class="an">Dạng</th><th>Tiến độ</th></tr></thead><tbody>' + d.thu_muc.map(m =>
+    `<tr><td class="ten">${esc(m.lo)}<small>${esc(m.path)} · nhận tới ${gio(m.moc)}</small></td><td>${m.so_file}<br><small style="color:var(--mo)">${m.gb} GB</small></td>` +
+    `<td class="an"><div class="buoc">${Object.entries(m.dang).map(([k, v]) => `<span class="b">${esc(k)} ${v}</span>`).join('')}</div></td>` +
+    `<td><div class="buoc">${Object.entries(m.tt).map(([k, v]) => `<span class="b ${['ĐÃ CẮT', 'CLIP LỖI', 'DẠNG CŨ'].includes(k) ? 'xong' : 'do'}">${esc(k)} ${v}</span>`).join('')}</div>` +
+    `<div class="bar"><u style="width:${Math.round(100 * m.xong / Math.max(1, m.so_file))}%"></u></div></td></tr>`).join('') + '</tbody></table>';
+
+  // cần phối hợp
+  const nh = {};
+  d.viec.forEach(v => (nh[v.ai] = nh[v.ai] || []).push(v));
+  h += `<div class="h2"><b>Cần phối hợp</b><span>${d.viec.length} việc · bấm dòng để mở sản phẩm</span></div>`;
+  h += d.viec.length ? '<div class="viec">' + Object.entries(nh).map(([ai, vs]) => `<div class="nhom"><div class="t">${AI[ai] || '•'} ${esc(ai)}<span class="so">${vs.length}</span></div><ul>` +
+    vs.map(v => `<li data-k="${esc(v.kenh)}|${v.stt}" style="cursor:pointer"><div class="m">${kenh(v.kenh)}<b>SP${v.stt}</b> ${esc(v.muc)}</div><div class="d">${esc(v.chi_tiet)}</div></li>`).join('') + '</ul></div>').join('') + '</div>'
+    : '<div class="tile">Không có việc nào cần phối hợp — lô đã xong hết.</div>';
+
+  // từng sản phẩm
+  h += `<div class="h2"><b>Tiến độ từng sản phẩm</b><span>${sp.length} sản phẩm · nhận → cắt → content → lồng / dựng</span></div>`;
+  h += '<table class="bang"><thead><tr><th>Sản phẩm</th><th class="an">Clip</th><th>Các bước</th><th>Trạng thái</th></tr></thead><tbody>';
+  sp.forEach(x => {
+    const k = `${x.kenh}|${x.stt}`, nclip = (x.os ? x.os.clip : 0) + (x.cc ? x.cc.clip : 0);
+    const buoc = x.buoc.map(b => `<span class="b ${b.tong && b.xong >= b.tong ? 'xong' : b.xong ? 'do' : 'chua'}">${esc(b.ten)} ${b.xong}/${b.tong}</span>`).join('');
+    h += `<tr class="sp" data-k="${esc(k)}"><td class="ten">${kenh(x.kenh)} SP${x.stt}<small>${esc(x.ten)}</small></td><td class="an">${nclip}${x.os ? `<br><small style="color:var(--mo)">${x.os.clip} one short</small>` : ''}</td>` +
+         `<td><div class="buoc">${buoc}</div></td><td><span class="tt ${x.xong ? 'xong' : 'dang'}">${x.xong ? '✔ xong' : 'đang làm'}</span></td></tr>`;
+    if (MO.has(k)) h += moRong(x);
+  });
+  h += '</tbody></table>';
+
+  // danh sách clip
+  const cl = d.clips.filter(c => LOC_CLIP === 'tat' ? true : LOC_CLIP === 'chua' ? !['ĐÃ CẮT', 'CLIP LỖI', 'DẠNG CŨ'].includes(c.tt) : c.dang === LOC_CLIP);
+  h += `<div class="h2"><b>Từng file nhận</b><span>${d.clips.length} file</span></div><div class="loc">` +
+    [['chua', 'Chưa xong / lỗi'], ['ONE SHORT', 'One short'], ['CẮT CẢNH', 'Cắt cảnh'], ['KHÔNG QR', 'Không QR'], ['tat', 'Tất cả']].map(([k, v]) => `<button data-loc="${k}" class="${LOC_CLIP === k ? 'on' : ''}">${v}</button>`).join('') + '</div>';
+  h += cl.length ? '<table class="bang cl"><thead><tr><th>File</th><th class="an">Thư mục</th><th>Kênh · mã</th><th class="an">Dạng</th><th>Trạng thái</th><th class="an">Ghi chú</th></tr></thead><tbody>' +
+    cl.map(c => `<tr><td><a href="/file?p=${encodeURIComponent(c.path)}" target="_blank">${esc(c.clip)}</a> <small style="color:var(--mo)">${c.mb} MB</small></td><td class="an">${esc(c.lo)}</td><td>${kenh(c.kenh)} ${c.stt != null ? 'SP' + c.stt : ''}${c.luot ? ` <small style="color:var(--mo)">L${c.luot}C${c.canh}</small>` : ''}</td>` +
+      `<td class="an">${esc(c.dang)}</td><td><span class="tt ${c.tt === 'ĐÃ CẮT' ? 'xong' : 'dang'}">${esc(c.tt)}</span></td><td class="an" style="color:var(--mo)">${esc(c.ghi)}</td></tr>`).join('') + '</tbody></table>'
+    : '<div class="tile">Không có file nào ở mục này.</div>';
+  $('#noi').innerHTML = h;
+  veDangChay();
+  $('#noi').querySelectorAll('.dg').forEach(b => b.onclick = () => {
+    const [loai, gt] = b.dataset.ct.split('|');
+    CT = CT && CT.loai === loai && CT.gt === gt ? null : {loai, gt};
+    ve();
+    if (CT) setTimeout(() => $('.chi-tiet')?.scrollIntoView({behavior: 'smooth', block: 'start'}), 30);
+  });
+  $('#noi').querySelector('.dong-ct')?.addEventListener('click', () => { CT = null; ve(); });
+  $('#noi').querySelectorAll('tr.sp').forEach(tr => tr.onclick = () => bat(tr.dataset.k));
+  $('#noi').querySelectorAll('.nhom li').forEach(li => li.onclick = () => { if (!MO.has(li.dataset.k)) bat(li.dataset.k); setTimeout(() => { const e = document.querySelector(`tr.sp[data-k="${CSS.escape(li.dataset.k)}"]`); e && e.scrollIntoView({behavior: 'smooth', block: 'center'}); }, 30); });
+  $('#noi').querySelectorAll('.loc button[data-loc]').forEach(b => b.onclick = () => { LOC_CLIP = b.dataset.loc; ve(); });
+  $('#noi').querySelectorAll('.loc button[data-locdc]').forEach(b => b.onclick = () => { LOC_DC = b.dataset.locdc; const y = scrollY; ve(); scrollTo(0, y); });
+}
+
+function bat(k) {
+  MO.has(k) ? MO.delete(k) : MO.add(k);
+  try { localStorage.setItem('tn_mo', JSON.stringify([...MO])); } catch (e) {}
+  ve();
+}
+
+function li(a) { return a.length ? '<ul>' + a.map(x => `<li>${x}</li>`).join('') + '</ul>' : '<ul><li>—</li></ul>'; }
+const vid = v => `<a href="/file?p=${encodeURIComponent(v.path)}" target="_blank">${esc(v.ten)}</a>${v.da_dang ? ' · đã đăng' : ''}`;
+
+function moRong(x) {
+  let k = '';
+  if (x.cc) {
+    const c = x.cc;
+    k += `<div><h4>✂️ Cắt cảnh</h4>${li([`${c.clip_cat}/${c.clip} clip đã cắt → ${c.canh} cảnh (qua cửa kiểm ${c.qua_kiem})`,
+      c.co_phieu ? `Phiếu: ${c.luot_phieu} lượt, có ${c.luot_phieu - c.luot_thieu.length} · ô cảnh ${c.o_co}/${c.o_phieu}` : 'chưa tìm thấy phiếu quay',
+      ...c.luot_thieu.map(l => `<span style="color:var(--vang)">thiếu L${l.luot} ${esc(l.ten)} ⇒ dựng bằng suộc Douyin / cảnh khác</span>`),
+      ...c.chua.map(esc),
+      c.thu_muc ? `<a href="/quan-ly#tm=${encodeURIComponent(c.thu_muc)}" target="_blank">mở thư mục cảnh ›</a>` : ''].filter(Boolean))}</div>`;
+  }
+  if (x.os) k += `<div><h4>🎞 One short</h4>${li([`${x.os.cat}/${x.os.clip} clip đã cắt${x.os.loi ? ` · ${x.os.loi} clip lỗi` : ''}`, ...x.os.chua.map(esc)])}</div>`;
+  const ct = (c, ten) => c ? `<div><h4>✍️ ${ten}</h4>${li([`${c.bai} bài · bám win ${c.win} · sạch cửa máy ${c.sach}`, esc(c.trang_thai), ...(c.luot_thieu || []).map(l => `<span style="color:var(--vang)">${esc(l)}</span>`)].filter(Boolean))}</div>` : '';
+  k += ct(x.content_nd, 'Content dựng (cắt ghép)') + ct(x.content_os, 'Content one short');
+  if (x.cc || x.content_nd) k += `<div><h4>🎬 Video dựng (${x.video_nd.length})</h4>${li(x.video_nd.map(vid))}</div>`;
+  if (x.os) k += `<div><h4>🔊 One short đã lồng voice (${x.video_os.length})</h4>${li(x.video_os.map(vid))}</div>`;
+  return `<tr class="mo-rong"><td colspan="4"><div class="khoi">${k}</div></td></tr>`;
+}
+
+window.addEventListener('hashchange', dsLo);
+$('#lam-moi').onclick = () => taiLo(true);
+dsLo();
+</script>
+</body>
+</html>
